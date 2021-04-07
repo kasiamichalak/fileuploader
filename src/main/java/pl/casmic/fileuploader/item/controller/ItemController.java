@@ -1,4 +1,4 @@
-package pl.casmic.fileuploader.item;
+package pl.casmic.fileuploader.item.controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -7,9 +7,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import pl.casmic.fileuploader.item.mapper.ItemMapper;
+import pl.casmic.fileuploader.item.exception.ItemNotFoundException;
+import pl.casmic.fileuploader.item.service.ItemServiceImpl;
+import pl.casmic.fileuploader.item.domain.Item;
 import pl.casmic.fileuploader.item.dto.*;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Optional;
 

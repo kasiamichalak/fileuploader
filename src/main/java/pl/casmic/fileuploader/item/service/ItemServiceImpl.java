@@ -1,11 +1,14 @@
-package pl.casmic.fileuploader.item;
+package pl.casmic.fileuploader.item.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.casmic.fileuploader.item.exception.ItemNotFoundException;
+import pl.casmic.fileuploader.item.domain.Item;
 import pl.casmic.fileuploader.item.dto.ItemDTO;
 import pl.casmic.fileuploader.item.dto.ItemListDTO;
-import pl.casmic.fileuploader.item.dto.ItemsDTO;
+import pl.casmic.fileuploader.item.mapper.ItemMapper;
+import pl.casmic.fileuploader.item.repository.ItemRepository;
 
 import java.time.LocalDate;
 import java.util.List;

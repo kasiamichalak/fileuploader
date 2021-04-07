@@ -1,8 +1,8 @@
-package pl.casmic.fileuploader.item;
+package pl.casmic.fileuploader.item.service;
 
+import pl.casmic.fileuploader.item.domain.Item;
 import pl.casmic.fileuploader.item.dto.ItemDTO;
 import pl.casmic.fileuploader.item.dto.ItemListDTO;
-import pl.casmic.fileuploader.item.dto.ItemsDTO;
 
 import java.util.List;
 

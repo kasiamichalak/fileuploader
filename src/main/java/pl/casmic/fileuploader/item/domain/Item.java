@@ -1,4 +1,4 @@
-package pl.casmic.fileuploader.item;
+package pl.casmic.fileuploader.item.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;

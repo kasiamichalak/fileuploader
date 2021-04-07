@@ -1,4 +1,4 @@
-package pl.casmic.fileuploader.item;
+package pl.casmic.fileuploader.item.exception;
 
 public class ItemNotFoundException extends RuntimeException {
 
