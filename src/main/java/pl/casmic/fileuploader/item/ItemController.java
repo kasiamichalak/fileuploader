@@ -1,6 +1,7 @@
 package pl.casmic.fileuploader.item;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +22,11 @@ public class ItemController {
     ItemMapper itemMapper;
 
     @PostMapping(value = "/upload", consumes = {MediaType.APPLICATION_JSON_VALUE,
-                                                    MediaType.MULTIPART_FORM_DATA_VALUE},
-                                        produces= MediaType.APPLICATION_JSON_VALUE)
+            MediaType.MULTIPART_FORM_DATA_VALUE},
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public UploadResponseDTO upload(@RequestPart (name = "file") MultipartFile file,
-                                 @RequestParam (name = "description") Optional<String> description) throws IOException {
+    public UploadResponseDTO upload(@RequestPart(name = "file") MultipartFile file,
+                                    @RequestParam(name = "description") Optional<String> description) throws IOException {
         ItemDTO itemDTO = new ItemDTO();
         UploadResponseDTO uploadResponseDTO = new UploadResponseDTO();
         itemDTO.setData(file.getBytes());
@@ -51,13 +52,13 @@ public class ItemController {
 
     @GetMapping("/items/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ItemDTO item(@PathVariable (name = "id") String id) {
+    public ItemDTO item(@PathVariable(name = "id") String id) {
         return itemService.findById(id);
     }
 
-    @DeleteMapping ("/items/{id}/delete")
-    @ResponseStatus(HttpStatus.OK)
-    public DeleteResponseDTO delete(@PathVariable (name = "id") String id) {
+    @DeleteMapping("/items/{id}/delete")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public DeleteResponseDTO delete(@PathVariable(name = "id") String id) {
         DeleteResponseDTO deleteResponseDTO = new DeleteResponseDTO();
         deleteResponseDTO.setSuccess(false);
         deleteResponseDTO.setMessage("Deletion failed");
@@ -72,4 +73,11 @@ public class ItemController {
         return deleteResponseDTO;
     }
 
+    @GetMapping("/items/{id}/download")
+    public ResponseEntity<byte[]> download(@PathVariable(name = "id") String id) {
+        ItemDTO itemDTO = itemService.findById(id);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + itemDTO.getName() + "\"")
+                .body(itemDTO.getData());
+    }
 }
