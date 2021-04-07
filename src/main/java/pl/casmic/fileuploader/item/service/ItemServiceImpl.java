@@ -12,6 +12,7 @@ import pl.casmic.fileuploader.item.repository.ItemRepository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -45,10 +46,9 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDTO findById(String id) {
+    public Optional<ItemDTO> findById(String id) {
         return itemRepository.findById(id)
-                .map(itemMapper::itemToItemDTO)
-                .orElseThrow(ItemNotFoundException::new);
+                .map(itemMapper::itemToItemDTO);
     }
 
     @Override

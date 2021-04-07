@@ -5,11 +5,12 @@ import pl.casmic.fileuploader.item.dto.ItemDTO;
 import pl.casmic.fileuploader.item.dto.ItemListDTO;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ItemService {
 
     Item store(ItemDTO itemDTO);
-    ItemDTO findById(String id);
+    Optional<ItemDTO> findById(String id);
     List<ItemListDTO> findAll();
     void delete(String id);
 }

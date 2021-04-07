@@ -1,6 +1,7 @@
 package pl.casmic.fileuploader.item.controller;
 
 import lombok.AllArgsConstructor;
+import org.apache.catalina.connector.ResponseFacade;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,6 +14,7 @@ import pl.casmic.fileuploader.item.service.ItemServiceImpl;
 import pl.casmic.fileuploader.item.domain.Item;
 import pl.casmic.fileuploader.item.dto.*;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -30,9 +32,13 @@ public class ItemController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     public UploadResponseDTO upload(@RequestPart(name = "file") MultipartFile file,
                                     @RequestParam(name = "description") Optional<String> description) throws IOException {
+
         ItemDTO itemDTO = new ItemDTO();
+
         UploadResponseDTO uploadResponseDTO = new UploadResponseDTO();
+
         itemDTO.setData(file.getBytes());
+
         if (file.getSize() == 0) {
             return uploadResponseDTO;
         } else {
@@ -55,32 +61,49 @@ public class ItemController {
 
     @GetMapping("/items/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ItemDTO item(@PathVariable(name = "id") String id) {
-        return itemService.findById(id);
+    public ResponseEntity item(@PathVariable(name = "id") String id) {
+        Optional<ItemDTO> optionalItemDTO = itemService.findById(id);
+        if (optionalItemDTO.isPresent()) {
+            return ResponseEntity.ok(optionalItemDTO.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/items/{id}/delete")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public DeleteResponseDTO delete(@PathVariable(name = "id") String id) {
+
         DeleteResponseDTO deleteResponseDTO = new DeleteResponseDTO();
-        deleteResponseDTO.setSuccess(false);
-        deleteResponseDTO.setMessage("Deletion failed");
+
         itemService.delete(id);
-        try {
-            itemService.findById(id);
-        } catch (ItemNotFoundException e) {
-            deleteResponseDTO.setSuccess(true);
-            deleteResponseDTO.setMessage("File deleted");
+
+        Optional<ItemDTO> itemDTOOptional = itemService.findById(id);
+
+        if (itemDTOOptional.isPresent()) {
+            deleteResponseDTO.setSuccess(false);
+            deleteResponseDTO.setMessage("Deletion failed");
             return deleteResponseDTO;
         }
+
+        deleteResponseDTO.setSuccess(true);
+        deleteResponseDTO.setMessage("File deleted");
         return deleteResponseDTO;
     }
 
     @GetMapping("/items/{id}/download")
     public ResponseEntity<byte[]> download(@PathVariable(name = "id") String id) {
-        ItemDTO itemDTO = itemService.findById(id);
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + itemDTO.getName() + "\"")
-                .body(itemDTO.getData());
+
+        Optional<ItemDTO> optionalItemDTO = itemService.findById(id);
+
+        if (optionalItemDTO.isPresent()) {
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + optionalItemDTO.get().getName() + "\"")
+                    .body(optionalItemDTO.get().getData());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+
     }
 }
