@@ -18,23 +18,17 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonPropertyOrder({"id", "name", "description", "date"})
 @Table(name="item")
 public class Item {
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
-    @JsonProperty("itemID")
     private String id;
-    @JsonProperty("itemName")
     private String name;
-    @JsonIgnore
     @Lob
     private byte[] data;
     private String description;
-    @JsonProperty("itemSize")
     private Long size;
-    @JsonProperty("date")
-    private LocalDate uploadDate = LocalDate.now();
+    private LocalDate uploadDate;
 
 }

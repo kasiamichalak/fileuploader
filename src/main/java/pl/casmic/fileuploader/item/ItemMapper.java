@@ -1,15 +1,17 @@
 package pl.casmic.fileuploader.item;
 
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
+import pl.casmic.fileuploader.item.dto.ItemDTO;
+import pl.casmic.fileuploader.item.dto.ItemListDTO;
 
-@Component
-public class ItemMapper {
+@Mapper
+public interface ItemMapper {
 
-    ItemDTO itemToItemDTO(Item item) {
-        return null;
-    };
+    ItemMapper ITEM_MAPPER = Mappers.getMapper(ItemMapper.class);
 
-    Item itemDTOToItem(ItemDTO itemDTO) {
-        return null;
-    };
+    ItemDTO itemToItemDTO(Item item);
+    ItemListDTO itemToItemListDTO(Item item);
+    Item itemDTOToItem(ItemDTO itemDTO);
+
 }

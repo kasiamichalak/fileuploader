@@ -3,6 +3,9 @@ package pl.casmic.fileuploader.item;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.casmic.fileuploader.item.dto.ItemDTO;
+import pl.casmic.fileuploader.item.dto.ItemListDTO;
+import pl.casmic.fileuploader.item.dto.ItemsDTO;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,13 +20,13 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional
     @Override
-    public Item store(final ItemDTO itemDto) {
+    public Item store(final ItemDTO itemDTO) {
 
         final Item createdItem = Item.builder()
-                .name(itemDto.getName())
-                .data(itemDto.getData())
-                .description(itemDto.getDescription())
-                .size(itemDto.getSize())
+                .name(itemDTO.getName())
+                .data(itemDTO.getData())
+                .description(itemDTO.getDescription())
+                .size(itemDTO.getSize())
                 .uploadDate(LocalDate.now())
                 .build();
 
@@ -31,16 +34,18 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDTO> findAll() {
+    public List<ItemListDTO> findAll() {
         return itemRepository.findAll()
                 .stream()
-                .map(itemMapper::itemToItemDTO)
+                .map(itemMapper::itemToItemListDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Item findById(String id) {
-        return itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
+    public ItemDTO findById(String id) {
+        return itemRepository.findById(id)
+                .map(itemMapper::itemToItemDTO)
+                .orElseThrow(ItemNotFoundException::new);
     }
 }
 
