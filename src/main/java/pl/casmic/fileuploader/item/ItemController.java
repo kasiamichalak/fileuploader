@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import pl.casmic.fileuploader.item.dto.ItemDTO;
 import pl.casmic.fileuploader.item.dto.ItemListDTO;
 import pl.casmic.fileuploader.item.dto.ItemsDTO;
+import pl.casmic.fileuploader.item.dto.UploadResponseDTO;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -25,19 +26,23 @@ public class ItemController {
                                                     MediaType.MULTIPART_FORM_DATA_VALUE},
                                         produces= MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public ItemDTO upload(@RequestPart (name = "file") MultipartFile file,
-                                 @RequestParam (name = "description") Optional<String> description) {
+    public UploadResponseDTO upload(@RequestPart (name = "file") MultipartFile file,
+                                 @RequestParam (name = "description") Optional<String> description) throws IOException {
         ItemDTO itemDTO = new ItemDTO();
-        try {
-            itemDTO.setData(file.getBytes());
-        } catch (IOException e) {
-            System.out.print("uppp, sth went wrong ");
+        UploadResponseDTO uploadResponseDTO = new UploadResponseDTO();
+        itemDTO.setData(file.getBytes());
+        if (file.getSize() == 0) {
+            return uploadResponseDTO;
+        } else {
+            itemDTO.setName(file.getOriginalFilename());
+            itemDTO.setSize(file.getSize());
+            itemDTO.setDescription(description.orElseGet(() -> "not provided"));
+            Item itemCreated = itemService.store(itemDTO);
+            itemDTO = itemMapper.itemToItemDTO(itemCreated);
+            uploadResponseDTO.setSuccess(true);
+            uploadResponseDTO.setItemDTO(itemDTO);
+            return uploadResponseDTO;
         }
-        itemDTO.setName(file.getOriginalFilename());
-        itemDTO.setSize(file.getSize());
-        itemDTO.setDescription(description.orElseGet(() -> "not provided"));
-        Item itemCreated = itemService.store(itemDTO);
-        return itemMapper.itemToItemDTO(itemCreated);
     }
 
     @GetMapping("/items")
