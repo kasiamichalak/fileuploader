@@ -6,11 +6,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import pl.casmic.fileuploader.item.dto.ItemDTO;
-import pl.casmic.fileuploader.item.dto.ItemListDTO;
-import pl.casmic.fileuploader.item.dto.ItemsDTO;
-import pl.casmic.fileuploader.item.dto.UploadResponseDTO;
+import pl.casmic.fileuploader.item.dto.*;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -51,9 +49,27 @@ public class ItemController {
         return new ItemsDTO(itemService.findAll());
     }
 
-    @GetMapping(value = "/items/{id}")
+    @GetMapping("/items/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ItemDTO item(@PathVariable (name = "id") String id) {
         return itemService.findById(id);
     }
+
+    @DeleteMapping ("/items/{id}/delete")
+    @ResponseStatus(HttpStatus.OK)
+    public DeleteResponseDTO delete(@PathVariable (name = "id") String id) {
+        DeleteResponseDTO deleteResponseDTO = new DeleteResponseDTO();
+        deleteResponseDTO.setSuccess(false);
+        deleteResponseDTO.setMessage("Deletion failed");
+        itemService.delete(id);
+        try {
+            itemService.findById(id);
+        } catch (ItemNotFoundException e) {
+            deleteResponseDTO.setSuccess(true);
+            deleteResponseDTO.setMessage("File deleted");
+            return deleteResponseDTO;
+        }
+        return deleteResponseDTO;
+    }
+
 }

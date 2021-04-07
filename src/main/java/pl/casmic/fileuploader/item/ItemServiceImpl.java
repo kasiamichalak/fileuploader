@@ -47,5 +47,10 @@ public class ItemServiceImpl implements ItemService {
                 .map(itemMapper::itemToItemDTO)
                 .orElseThrow(ItemNotFoundException::new);
     }
+
+    @Override
+    public void delete(String id) {
+        itemRepository.deleteById(id);
+    }
 }
 

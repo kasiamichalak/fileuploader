@@ -11,4 +11,5 @@ public interface ItemService {
     Item store(ItemDTO itemDTO);
     ItemDTO findById(String id);
     List<ItemListDTO> findAll();
+    void delete(String id);
 }
