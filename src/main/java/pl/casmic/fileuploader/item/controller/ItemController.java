@@ -72,8 +72,7 @@ public class ItemController {
     }
 
     @DeleteMapping("/items/{id}/delete")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public DeleteResponseDTO delete(@PathVariable(name = "id") String id) {
+    public ResponseEntity<DeleteResponseDTO> delete(@PathVariable(name = "id") String id) {
 
         DeleteResponseDTO deleteResponseDTO = new DeleteResponseDTO();
 
@@ -84,12 +83,12 @@ public class ItemController {
         if (itemDTOOptional.isPresent()) {
             deleteResponseDTO.setSuccess(false);
             deleteResponseDTO.setMessage("Deletion failed");
-            return deleteResponseDTO;
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(deleteResponseDTO);
         }
 
         deleteResponseDTO.setSuccess(true);
         deleteResponseDTO.setMessage("File deleted");
-        return deleteResponseDTO;
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deleteResponseDTO);
     }
 
     @GetMapping("/items/{id}/download")
@@ -105,6 +104,5 @@ public class ItemController {
         } else {
             return ResponseEntity.notFound().build();
         }
-
     }
 }

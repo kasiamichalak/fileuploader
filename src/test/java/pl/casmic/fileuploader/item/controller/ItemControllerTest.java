@@ -130,7 +130,7 @@ class ItemControllerTest extends AbstractRestControllerTest {
         mockMvc.perform(delete(ITEM_DTO_URL_ID_NON_EXISTING + "/delete")
                 .accept(APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.success", equalTo(DELETE_SUCCESS_FALSE)))
                 .andExpect(jsonPath("$.message", equalTo(DELETE_MESSAGE_FALSE)));
 
