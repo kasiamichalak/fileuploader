@@ -1,20 +1,16 @@
 package pl.casmic.fileuploader.item.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.hibernate.id.UUIDGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import pl.casmic.fileuploader.item.dto.ItemDTO;
 import pl.casmic.fileuploader.item.dto.ItemListDTO;
-import pl.casmic.fileuploader.item.service.ItemService;
 import pl.casmic.fileuploader.item.service.ItemServiceImpl;
 
 import java.time.LocalDate;
@@ -22,11 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -52,8 +46,6 @@ class ItemControllerTest extends AbstractRestControllerTest {
     private final static boolean DELETE_SUCCESS_FALSE = false;
     private final static String DELETE_MESSAGE_TRUE = "File deleted";
     private final static String DELETE_MESSAGE_FALSE = "Deletion failed";
-    private final static String WITH_DESCRIPTION_PARAM = "description";
-    private final static String NULL_DESCRIPTION_PARAM = null;
     private final static ItemDTO ITEM_DTO_FIELDS_NULL = getExpectedItemDTOWithNullFields();
 
     @BeforeEach
@@ -123,23 +115,30 @@ class ItemControllerTest extends AbstractRestControllerTest {
     }
 
     @Test
-    void shouldReturnSuccessFalseForDeleteItemByIdWhenItemDoesNotExistInDB() throws Exception {
+    void shouldDownloadFileForItemByIdWhenItemExistsInDB() throws Exception {
 
         when(itemService.findById(anyString())).thenReturn(Optional.of(ITEM_DTO));
 
-        mockMvc.perform(delete(ITEM_DTO_URL_ID_NON_EXISTING + "/delete")
+        mockMvc.perform(get(ITEM_DTO_URL + "/download")
                 .accept(APPLICATION_JSON)
+                .content(ITEM_DTO.getData())
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.success", equalTo(DELETE_SUCCESS_FALSE)))
-                .andExpect(jsonPath("$.message", equalTo(DELETE_MESSAGE_FALSE)));
+                .andExpect(status().isOk());
 
-        verify(itemService, times(1)).delete(anyString());
-
+        verify(itemService, times(1)).findById(anyString());
     }
 
     @Test
-    void download() {
+    void shouldReturnNotFoundWhenDownloadFileForItemByIdWhenItemDoesNotExistInDB() throws Exception {
+
+        when(itemService.findById(anyString())).thenReturn(Optional.empty());
+
+        mockMvc.perform(get(ITEM_DTO_URL_ID_NON_EXISTING + "/download")
+                .accept(APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+
+        verify(itemService, times(1)).findById(anyString());
     }
 
 

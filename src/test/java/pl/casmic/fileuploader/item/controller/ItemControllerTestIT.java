@@ -114,22 +114,6 @@ class ItemControllerTestIT extends AbstractRestControllerTest {
                 .andExpect(jsonPath("$.item", is(nullValue())));
     }
 
-    @Test
-    void shouldDisplayListOfAllFilesUploadedAndSavedInDB() {
-    }
-
-    @Test
-    void item() {
-    }
-
-    @Test
-    void delete() {
-    }
-
-    @Test
-    void download() {
-    }
-
     private MockMultipartFile getFileModel(ItemDTO dto) throws JsonProcessingException {
         return new MockMultipartFile("file", dto.getName(), MediaType.TEXT_PLAIN_VALUE, asJSONString(dto).getBytes());
     }
