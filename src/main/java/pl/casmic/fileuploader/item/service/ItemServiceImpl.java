@@ -3,7 +3,6 @@ package pl.casmic.fileuploader.item.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.casmic.fileuploader.item.exception.ItemNotFoundException;
 import pl.casmic.fileuploader.item.domain.Item;
 import pl.casmic.fileuploader.item.dto.ItemDTO;
 import pl.casmic.fileuploader.item.dto.ItemListDTO;
@@ -24,7 +23,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional
     @Override
-    public Item store(final ItemDTO itemDTO) {
+    public ItemDTO store(final ItemDTO itemDTO) {
 
         final Item createdItem = Item.builder()
                 .name(itemDTO.getName())
@@ -34,7 +33,9 @@ public class ItemServiceImpl implements ItemService {
                 .uploadDate(LocalDate.now())
                 .build();
 
-        return itemRepository.save(createdItem);
+        itemRepository.save(createdItem);
+
+        return itemMapper.itemToItemDTO(createdItem);
     }
 
     @Override

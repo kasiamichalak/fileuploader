@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface ItemService {
 
-    Item store(ItemDTO itemDTO);
+    ItemDTO store(ItemDTO itemDTO);
     Optional<ItemDTO> findById(String id);
     List<ItemListDTO> findAll();
     void delete(String id);
