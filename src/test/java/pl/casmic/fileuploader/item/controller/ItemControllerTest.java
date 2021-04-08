@@ -24,10 +24,12 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.notNull;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -46,8 +48,10 @@ class ItemControllerTest extends AbstractRestControllerTest {
     private final static String ID_NON_EXISTING = UUIDGenerator.buildSessionFactoryUniqueIdentifierGenerator().toString();
     private final static String ITEM_DTO_URL_ID_NON_EXISTING = "/items/" + ID_NON_EXISTING;
     private final static ItemListDTO ITEM_LIST_DTO = getExpectedItemListDTO();
-    private final static boolean UPLOAD_SUCCESS_TRUE = true;
-    private final static boolean UPLOAD_SUCCESS_FALSE = false;
+    private final static boolean DELETE_SUCCESS_TRUE = true;
+    private final static boolean DELETE_SUCCESS_FALSE = false;
+    private final static String DELETE_MESSAGE_TRUE = "File deleted";
+    private final static String DELETE_MESSAGE_FALSE = "Deletion failed";
     private final static String WITH_DESCRIPTION_PARAM = "description";
     private final static String NULL_DESCRIPTION_PARAM = null;
     private final static ItemDTO ITEM_DTO_FIELDS_NULL = getExpectedItemDTOWithNullFields();
@@ -73,10 +77,13 @@ class ItemControllerTest extends AbstractRestControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.items", hasSize(2)));
+
+        verify(itemService, times(1)).findAll();
+
     }
 
     @Test
-    void shouldDisplayItemByIdWhenExistsInDB() throws Exception {
+    void shouldDisplayItemByIdWhenItemExistsInDB() throws Exception {
 
         when(itemService.findById(anyString())).thenReturn(Optional.of(ITEM_DTO));
 
@@ -85,6 +92,9 @@ class ItemControllerTest extends AbstractRestControllerTest {
                 .content(String.valueOf(ITEM_LIST_DTO))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+
+        verify(itemService, times(1)).findById(anyString());
+
     }
 
     @Test
@@ -94,10 +104,38 @@ class ItemControllerTest extends AbstractRestControllerTest {
                 .accept(APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+
+        verify(itemService, times(1)).findById(anyString());
+
     }
 
     @Test
-    void delete() {
+    void shouldReturnSuccessTrueForDeleteItemByIdWhenItemExistsInDB() throws Exception {
+
+        mockMvc.perform(delete(ITEM_DTO_URL + "/delete")
+                .accept(APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent())
+                .andExpect(jsonPath("$.success", equalTo(DELETE_SUCCESS_TRUE)))
+                .andExpect(jsonPath("$.message", equalTo(DELETE_MESSAGE_TRUE)));
+
+        verify(itemService, times(1)).delete(anyString());
+    }
+
+    @Test
+    void shouldReturnSuccessFalseForDeleteItemByIdWhenItemDoesNotExistInDB() throws Exception {
+
+        when(itemService.findById(anyString())).thenReturn(Optional.of(ITEM_DTO));
+
+        mockMvc.perform(delete(ITEM_DTO_URL_ID_NON_EXISTING + "/delete")
+                .accept(APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent())
+                .andExpect(jsonPath("$.success", equalTo(DELETE_SUCCESS_FALSE)))
+                .andExpect(jsonPath("$.message", equalTo(DELETE_MESSAGE_FALSE)));
+
+        verify(itemService, times(1)).delete(anyString());
+
     }
 
     @Test
