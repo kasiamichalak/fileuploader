@@ -15,6 +15,7 @@ import pl.casmic.fileuploader.item.mapper.ItemMapper;
 import pl.casmic.fileuploader.item.service.ItemServiceImpl;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -33,23 +34,21 @@ public class ItemController {
     public UploadResponseDTO upload(@RequestPart(name = "file") MultipartFile file,
                                     @RequestParam(name = "description") Optional<String> description) throws IOException {
 
-        ItemDTO itemDTO = new ItemDTO();
-
         UploadResponseDTO uploadResponseDTO = new UploadResponseDTO();
 
-        itemDTO.setData(file.getBytes());
-
-        if (file.getSize() == 0) {
-            return uploadResponseDTO;
-        } else {
-            itemDTO.setName(file.getOriginalFilename());
-            itemDTO.setSize(file.getSize());
-            itemDTO.setDescription(description.orElseGet(() -> "not provided"));
+        if (file.getSize() != 0) {
+            ItemDTO itemDTO = ItemDTO.builder()
+                    .name(file.getOriginalFilename())
+                    .data(file.getBytes())
+                    .size(file.getSize())
+                    .description(description.orElseGet(() -> "not provided"))
+                    .uploadDate(LocalDate.now())
+                    .build();
             itemDTO = itemService.store(itemDTO);
             uploadResponseDTO.setSuccess(true);
             uploadResponseDTO.setItemDTO(itemDTO);
-            return uploadResponseDTO;
         }
+        return uploadResponseDTO;
     }
 
     @GetMapping("/items")
