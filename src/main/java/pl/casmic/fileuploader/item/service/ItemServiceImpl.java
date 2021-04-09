@@ -25,16 +25,8 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDTO store(final ItemDTO itemDTO) {
 
-        final Item createdItem = Item.builder()
-                .name(itemDTO.getName())
-                .data(itemDTO.getData())
-                .description(itemDTO.getDescription())
-                .size(itemDTO.getSize())
-                .uploadDate(LocalDate.now())
-                .build();
-
+        Item createdItem = itemMapper.itemDTOToItem(itemDTO);
         itemRepository.save(createdItem);
-
         return itemMapper.itemToItemDTO(createdItem);
     }
 
