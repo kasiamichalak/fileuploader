@@ -26,5 +26,4 @@ public class Item {
     private String description;
     private Long size;
     private LocalDate uploadDate;
-
 }

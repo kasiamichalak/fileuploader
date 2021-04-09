@@ -7,11 +7,10 @@ import lombok.*;
 import java.time.LocalDate;
 import java.util.List;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ItemsDTO {
 
     private List<ItemListDTO> items;

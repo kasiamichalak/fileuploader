@@ -9,11 +9,10 @@ import org.springframework.validation.annotation.Validated;
 import javax.persistence.Lob;
 import java.time.LocalDate;
 
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@Getter
-@Setter
 @JsonPropertyOrder({"id", "name", "description", "date"})
 public class ItemDTO {
 
