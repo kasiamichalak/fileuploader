@@ -75,9 +75,6 @@ public class ItemController {
     public ResponseEntity delete(@PathVariable(name = "id") String id) {
 
         DeleteResponseDTO deleteResponseDTO = new DeleteResponseDTO();
-//        deleteResponseDTO.setSuccess(false);
-//        deleteResponseDTO.setMessage("Deletion failed");
-//        ResponseEntity responseEntity;
 
         return itemService.findById(id).map(itemDTO -> {
             itemService.delete(id);
@@ -89,30 +86,16 @@ public class ItemController {
             deleteResponseDTO.setMessage("Deletion failed");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(deleteResponseDTO);
         });
-
-//        if(itemService.findById(id).isPresent()) {
-//
-//            responseEntity = ResponseEntity.status(HttpStatus.NO_CONTENT).body(deleteResponseDTO);
-//        } else {
-//            deleteResponseDTO.setSuccess(false);
-//            deleteResponseDTO.setMessage("Deletion failed");
-//            responseEntity = ResponseEntity.status(HttpStatus.NOT_FOUND).body(deleteResponseDTO);
-//        }
-//        return responseEntity;
     }
 
     @GetMapping("/items/{id}/download")
     public ResponseEntity<byte[]> download(@PathVariable(name = "id") String id) {
 
-        Optional<ItemDTO> optionalItemDTO = itemService.findById(id);
-
-        if (optionalItemDTO.isPresent()) {
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=\"" + optionalItemDTO.get().getName() + "\"")
-                    .body(optionalItemDTO.get().getData());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return itemService.findById(id)
+                .map(itemDTO -> ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + itemDTO.getName() + "\"")
+                        .body(itemDTO.getData()))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
