@@ -62,13 +62,9 @@ public class ItemController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity item(@PathVariable(name = "id") String id) {
 
-        Optional<ItemDTO> optionalItemDTO = itemService.findById(id);
-
-        if (optionalItemDTO.isPresent()) {
-            return ResponseEntity.ok(optionalItemDTO.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return itemService.findById(id)
+                .map(itemDTO -> ResponseEntity.ok(itemDTO))
+        .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/items/{id}/delete")
@@ -96,6 +92,6 @@ public class ItemController {
                         .header(HttpHeaders.CONTENT_DISPOSITION,
                         "attachment; filename=\"" + itemDTO.getName() + "\"")
                         .body(itemDTO.getData()))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.notFound().build());
     }
 }
