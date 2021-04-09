@@ -36,17 +36,17 @@ class ItemControllerTest extends AbstractRestControllerTest {
     ItemController itemController;
     MockMvc mockMvc;
 
-    private final static ItemDTO ITEM_DTO = getExpectedItemDTO();
-    private final static String ITEM_DTO_ID = ITEM_DTO.getId();
-    private final static String ITEM_DTO_URL = "/items/" + ITEM_DTO_ID;
-    private final static String ID_NON_EXISTING = UUIDGenerator.buildSessionFactoryUniqueIdentifierGenerator().toString();
-    private final static String ITEM_DTO_URL_ID_NON_EXISTING = "/items/" + ID_NON_EXISTING;
-    private final static ItemListDTO ITEM_LIST_DTO = getExpectedItemListDTO();
-    private final static boolean DELETE_SUCCESS_TRUE = true;
-    private final static boolean DELETE_SUCCESS_FALSE = false;
-    private final static String DELETE_MESSAGE_TRUE = "File deleted";
-    private final static String DELETE_MESSAGE_FALSE = "Deletion failed";
-    private final static ItemDTO ITEM_DTO_FIELDS_NULL = getExpectedItemDTOWithNullFields();
+    private static final ItemDTO ITEM_DTO = getExpectedItemDTO();
+    private static final String ITEM_DTO_ID = ITEM_DTO.getId();
+    private static final String ITEM_DTO_URL = "/items/" + ITEM_DTO_ID;
+    private static final String ID_NON_EXISTING = UUIDGenerator.buildSessionFactoryUniqueIdentifierGenerator().toString();
+    private static final String ITEM_DTO_URL_ID_NON_EXISTING = "/items/" + ID_NON_EXISTING;
+    private static final ItemListDTO ITEM_LIST_DTO = getExpectedItemListDTO();
+    private static final boolean DELETE_SUCCESS_TRUE = true;
+    private static final boolean DELETE_SUCCESS_FALSE = false;
+    private static final String DELETE_MESSAGE_TRUE = "File deleted";
+    private static final String DELETE_MESSAGE_FALSE = "Deletion failed";
+    private static final ItemDTO ITEM_DTO_FIELDS_NULL = getExpectedItemDTOWithNullFields();
 
     @BeforeEach
     void setUp() {

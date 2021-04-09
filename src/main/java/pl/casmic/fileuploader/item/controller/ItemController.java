@@ -63,7 +63,7 @@ public class ItemController {
 
         return itemService.findById(id)
                 .map(itemDTO -> ResponseEntity.ok(itemDTO))
-        .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/items/{id}/delete")
