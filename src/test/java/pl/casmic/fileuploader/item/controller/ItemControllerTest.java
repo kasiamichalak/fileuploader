@@ -98,20 +98,40 @@ class ItemControllerTest extends AbstractRestControllerTest {
                 .andExpect(status().isNotFound());
 
         verify(itemService, times(1)).findById(anyString());
-
     }
 
     @Test
     void shouldReturnSuccessTrueForDeleteItemByIdWhenItemExistsInDB() throws Exception {
 
+        when(itemService.findById(anyString())).thenReturn(Optional.ofNullable(ITEM_DTO));
+
         mockMvc.perform(delete(ITEM_DTO_URL + "/delete")
                 .accept(APPLICATION_JSON)
+                .param("id", ITEM_DTO_ID)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent())
                 .andExpect(jsonPath("$.success", equalTo(DELETE_SUCCESS_TRUE)))
                 .andExpect(jsonPath("$.message", equalTo(DELETE_MESSAGE_TRUE)));
 
+        verify(itemService, times(1)).findById(anyString());
         verify(itemService, times(1)).delete(anyString());
+    }
+
+    @Test
+    void shouldReturnSuccessFalseForDeleteItemByIdWhenItemDoesNotExistInDB() throws Exception {
+
+        when(itemService.findById(anyString())).thenReturn(Optional.empty());
+
+        mockMvc.perform(delete(ITEM_DTO_URL_ID_NON_EXISTING + "/delete")
+                .accept(APPLICATION_JSON)
+                .param("id", ID_NON_EXISTING)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.success", equalTo(DELETE_SUCCESS_FALSE)))
+                .andExpect(jsonPath("$.message", equalTo(DELETE_MESSAGE_FALSE)));
+
+        verify(itemService, times(1)).findById(anyString());
+        verify(itemService, times(0)).delete(anyString());
     }
 
     @Test

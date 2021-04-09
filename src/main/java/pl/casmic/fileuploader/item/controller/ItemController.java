@@ -7,7 +7,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import pl.casmic.fileuploader.item.domain.Item;
 import pl.casmic.fileuploader.item.dto.DeleteResponseDTO;
 import pl.casmic.fileuploader.item.dto.ItemDTO;
 import pl.casmic.fileuploader.item.dto.ItemsDTO;
@@ -17,6 +16,7 @@ import pl.casmic.fileuploader.item.service.ItemServiceImpl;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 @RestController
 @RequestMapping("/")
@@ -27,8 +27,8 @@ public class ItemController {
     ItemMapper itemMapper;
 
     @PostMapping(value = "/upload",
-                consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE},
-                produces = MediaType.APPLICATION_JSON_VALUE)
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE},
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.ACCEPTED)
     public UploadResponseDTO upload(@RequestPart(name = "file") MultipartFile file,
                                     @RequestParam(name = "description") Optional<String> description) throws IOException {
@@ -72,23 +72,33 @@ public class ItemController {
     }
 
     @DeleteMapping("/items/{id}/delete")
-    public ResponseEntity<DeleteResponseDTO> delete(@PathVariable(name = "id") String id) {
+    public ResponseEntity delete(@PathVariable(name = "id") String id) {
 
         DeleteResponseDTO deleteResponseDTO = new DeleteResponseDTO();
+//        deleteResponseDTO.setSuccess(false);
+//        deleteResponseDTO.setMessage("Deletion failed");
+//        ResponseEntity responseEntity;
 
-        itemService.delete(id);
-
-        Optional<ItemDTO> itemDTOOptional = itemService.findById(id);
-
-        if (itemDTOOptional.isPresent()) {
+        return itemService.findById(id).map(itemDTO -> {
+            itemService.delete(id);
+            deleteResponseDTO.setSuccess(true);
+            deleteResponseDTO.setMessage("File deleted");
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deleteResponseDTO);
+        }).orElseGet(() -> {
             deleteResponseDTO.setSuccess(false);
             deleteResponseDTO.setMessage("Deletion failed");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(deleteResponseDTO);
-        }
+        });
 
-        deleteResponseDTO.setSuccess(true);
-        deleteResponseDTO.setMessage("File deleted");
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deleteResponseDTO);
+//        if(itemService.findById(id).isPresent()) {
+//
+//            responseEntity = ResponseEntity.status(HttpStatus.NO_CONTENT).body(deleteResponseDTO);
+//        } else {
+//            deleteResponseDTO.setSuccess(false);
+//            deleteResponseDTO.setMessage("Deletion failed");
+//            responseEntity = ResponseEntity.status(HttpStatus.NOT_FOUND).body(deleteResponseDTO);
+//        }
+//        return responseEntity;
     }
 
     @GetMapping("/items/{id}/download")
