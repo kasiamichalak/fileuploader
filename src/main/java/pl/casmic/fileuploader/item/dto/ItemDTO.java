@@ -23,9 +23,9 @@ public class ItemDTO {
     @JsonIgnore
     @Lob
     private byte[] data;
+    private String description;
     @JsonIgnore
     private Long size;
-    private String description;
     @JsonProperty("date")
     private LocalDate uploadDate;
 }

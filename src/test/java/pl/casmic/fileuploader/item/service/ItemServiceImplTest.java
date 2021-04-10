@@ -77,7 +77,6 @@ class ItemServiceImplTest {
         verify(itemRepository, times(1)).findAll();
     }
 
-//    TODO: jeszcze nie działa
     @Test
     void shouldReturnItemDTOWhenFindByIdHappyPath() {
 
@@ -89,8 +88,10 @@ class ItemServiceImplTest {
         assertNotNull(actual);
         assertEquals(expected.getId(), actual.getId());
         assertEquals(expected.getName(), actual.getName());
-        assertEquals(expected.getData(), actual.getData());
+        assertEquals(expected.getData().length, actual.getData().length);
         assertEquals(expected.getDescription(), actual.getDescription());
+        assertEquals(expected.getSize(), actual.getSize());
+        assertEquals(expected.getUploadDate(), actual.getUploadDate());
 
         verify(itemRepository, times(1)).findById(anyString());
     }

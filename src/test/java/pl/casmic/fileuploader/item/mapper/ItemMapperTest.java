@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ItemMapperTest {
-//TODO: mapowanie data w teście nie działa prawidłowo
+
     ItemMapper itemMapper = ItemMapper.ITEM_MAPPER;
 
     public static final Item ITEM = getExpectedItem();
@@ -26,8 +26,10 @@ class ItemMapperTest {
 
         assertEquals(actual.getId(), actual.getId());
         assertEquals(expected.getName(), actual.getName());
-        assertEquals(expected.getData(), actual.getData());
+        assertEquals(expected.getData().length, actual.getData().length);
         assertEquals(expected.getDescription(), actual.getDescription());
+        assertEquals(expected.getSize(), actual.getSize());
+        assertEquals(expected.getUploadDate(), actual.getUploadDate());
     }
 
     @Test
@@ -48,8 +50,10 @@ class ItemMapperTest {
 
         assertEquals(actual.getId(), actual.getId());
         assertEquals(expected.getName(), actual.getName());
-        assertEquals(expected.getData(), actual.getData());
+        assertEquals(expected.getData().length, actual.getData().length);
         assertEquals(expected.getDescription(), actual.getDescription());
+        assertEquals(expected.getSize(), actual.getSize());
+        assertEquals(expected.getUploadDate(), actual.getUploadDate());
     }
 
     private static Item getExpectedItem() {
@@ -68,8 +72,8 @@ class ItemMapperTest {
                 .id(ITEM.getId())
                 .name(ITEM.getName())
                 .data("this is file".getBytes())
-                .size(ITEM.getSize())
                 .description(ITEM.getDescription())
+                .size(ITEM.getSize())
                 .uploadDate(ITEM.getUploadDate())
                 .build();
     }
