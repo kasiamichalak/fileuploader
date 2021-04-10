@@ -2,42 +2,36 @@ package pl.casmic.fileuploader.item.service;
 
 import org.hibernate.id.UUIDGenerator;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
+import pl.casmic.fileuploader.item.ItemGeneratorForTests;
 import pl.casmic.fileuploader.item.domain.Item;
 import pl.casmic.fileuploader.item.dto.ItemDTO;
 import pl.casmic.fileuploader.item.dto.ItemListDTO;
 import pl.casmic.fileuploader.item.mapper.ItemMapper;
 import pl.casmic.fileuploader.item.repository.ItemRepository;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static pl.casmic.fileuploader.item.ItemGeneratorForTests.*;
 
 
-class ItemServiceImplTest {
+class ItemServiceImplTest implements ItemGeneratorForTests {
 
     @Mock
-    ItemRepository itemRepository;
-    ItemServiceImpl itemService;
-    ItemMapper itemMapper = ItemMapper.ITEM_MAPPER;
+    private ItemRepository itemRepository;
+    private ItemServiceImpl itemService;
+    private ItemMapper itemMapper = ItemMapper.ITEM_MAPPER;
 
-    private static final Item ITEM = getExpectedItem();
+    private static final String ID = UUIDGenerator.buildSessionFactoryUniqueIdentifierGenerator().toString();
+    private static final Item ITEM = getExpectedItem(ID);
     private static final String ITEM_ID = ITEM.getId();
-    private static final String ID_NON_EXISTING = UUIDGenerator.buildSessionFactoryUniqueIdentifierGenerator().toString();
     private static final ItemDTO ITEM_DTO = getExpectedItemDTOFromItem(ITEM);
     private static final List<ItemListDTO> LIST_ITEM_LIST_DTOS = getExpectedListOfItemListDTOs();
     private static final List<Item> LIST_ITEMS = getExpectedListOfItems();
@@ -101,7 +95,7 @@ class ItemServiceImplTest {
 
         when(itemRepository.findById(anyString())).thenReturn(Optional.ofNullable(null));
 
-        Optional<ItemDTO> actual = itemService.findById(ID_NON_EXISTING);
+        Optional<ItemDTO> actual = itemService.findById(ID);
 
         assert (actual.isEmpty());
 
@@ -114,41 +108,5 @@ class ItemServiceImplTest {
         itemService.delete(ITEM_ID);
 
         verify(itemRepository, times(1)).deleteById(anyString());
-    }
-
-    private static Item getExpectedItem() {
-        return Item.builder()
-                .id(UUIDGenerator.buildSessionFactoryUniqueIdentifierGenerator().toString())
-                .name("file.jpg")
-                .data("this is file".getBytes())
-                .description("description")
-                .size(Long.valueOf(3457))
-                .uploadDate(LocalDate.of(2021, 4, 8))
-                .build();
-    }
-
-    private static ItemDTO getExpectedItemDTOFromItem(Item item) {
-        return ItemDTO.builder()
-                .id(ITEM.getId())
-                .name(ITEM.getName())
-                .data(ITEM.getData())
-                .size(ITEM.getSize())
-                .description(ITEM.getDescription())
-                .uploadDate(ITEM.getUploadDate())
-                .build();
-    }
-
-    private static List<ItemListDTO> getExpectedListOfItemListDTOs() {
-        List<ItemListDTO> items = new ArrayList<>();
-        items.add(new ItemListDTO());
-        items.add(new ItemListDTO());
-        return items;
-    }
-
-    private static List<Item> getExpectedListOfItems() {
-        List<Item> items = new ArrayList<>();
-        items.add(new Item());
-        items.add(new Item());
-        return items;
     }
 }

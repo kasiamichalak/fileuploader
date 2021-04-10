@@ -39,13 +39,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Optional<ItemDTO> findById(String id) {
+    public Optional<ItemDTO> findById(final String id) {
         return itemRepository.findById(id)
                 .map(itemMapper::itemToItemDTO);
     }
 
     @Override
-    public void delete(String id) {
+    public void delete(final String id) {
         itemRepository.deleteById(id);
     }
 }

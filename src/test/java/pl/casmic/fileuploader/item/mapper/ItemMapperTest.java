@@ -1,23 +1,25 @@
 package pl.casmic.fileuploader.item.mapper;
 
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.id.UUIDGenerator;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import pl.casmic.fileuploader.item.ItemGeneratorForTests;
 import pl.casmic.fileuploader.item.domain.Item;
 import pl.casmic.fileuploader.item.dto.ItemDTO;
 import pl.casmic.fileuploader.item.dto.ItemListDTO;
 
-import java.time.LocalDate;
+import static pl.casmic.fileuploader.item.ItemGeneratorForTests.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class ItemMapperTest {
+class ItemMapperTest implements ItemGeneratorForTests {
 
-    ItemMapper itemMapper = ItemMapper.ITEM_MAPPER;
+    private ItemMapper itemMapper = ItemMapper.ITEM_MAPPER;
 
-    public static final Item ITEM = getExpectedItem();
-    public static final ItemDTO ITEM_DTO = getExpectedItemDTOFromItem(ITEM);
-    public static final ItemListDTO ITEM_LIST_DTO = getExpectedItemListDTOFromItem(ITEM);
+    private static final String ID = UUIDGenerator.buildSessionFactoryUniqueIdentifierGenerator().toString();
+    private static final Item ITEM = getExpectedItem(ID);
+    private static final ItemDTO ITEM_DTO = getExpectedItemDTOFromItem(ITEM);
+    private static final ItemListDTO ITEM_LIST_DTO = getExpectedItemListDTOFromItem(ITEM);
 
     @Test
     void testItemToItemDTOHappyPath() {
@@ -54,35 +56,5 @@ class ItemMapperTest {
         assertEquals(expected.getDescription(), actual.getDescription());
         assertEquals(expected.getSize(), actual.getSize());
         assertEquals(expected.getUploadDate(), actual.getUploadDate());
-    }
-
-    private static Item getExpectedItem() {
-        return Item.builder()
-                .id(UUIDGenerator.buildSessionFactoryUniqueIdentifierGenerator().toString())
-                .name("file.jpg")
-                .data("this is file".getBytes())
-                .description("description")
-                .size(Long.valueOf(3457))
-                .uploadDate(LocalDate.of(2021, 4, 8))
-                .build();
-    }
-
-    private static ItemDTO getExpectedItemDTOFromItem(Item item) {
-        return ItemDTO.builder()
-                .id(ITEM.getId())
-                .name(ITEM.getName())
-                .data("this is file".getBytes())
-                .description(ITEM.getDescription())
-                .size(ITEM.getSize())
-                .uploadDate(ITEM.getUploadDate())
-                .build();
-    }
-
-    private static ItemListDTO getExpectedItemListDTOFromItem(Item item) {
-        return ItemListDTO.builder()
-                .id(ITEM.getId())
-                .name(ITEM.getName())
-                .size(ITEM.getSize())
-                .build();
     }
 }

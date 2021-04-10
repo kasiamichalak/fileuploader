@@ -9,6 +9,8 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import pl.casmic.fileuploader.item.ItemGeneratorForTests;
+import pl.casmic.fileuploader.item.domain.Item;
 import pl.casmic.fileuploader.item.dto.ItemDTO;
 import pl.casmic.fileuploader.item.dto.ItemListDTO;
 import pl.casmic.fileuploader.item.service.ItemServiceImpl;
@@ -28,25 +30,26 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class ItemControllerTest extends AbstractRestControllerTest {
+import static pl.casmic.fileuploader.item.ItemGeneratorForTests.*;
+
+class ItemControllerTest extends AbstractRestControllerTest implements ItemGeneratorForTests {
 
     @Mock
-    ItemServiceImpl itemService;
+    private ItemServiceImpl itemService;
     @InjectMocks
-    ItemController itemController;
-    MockMvc mockMvc;
+    private ItemController itemController;
+    private MockMvc mockMvc;
 
-    private static final ItemDTO ITEM_DTO = getExpectedItemDTO();
+    private static final String ID = UUIDGenerator.buildSessionFactoryUniqueIdentifierGenerator().toString();
+    private static final Item ITEM = getExpectedItem(ID);
+    private static final ItemDTO ITEM_DTO = getExpectedItemDTOFromItem(ITEM);
     private static final String ITEM_DTO_ID = ITEM_DTO.getId();
     private static final String ITEM_DTO_URL = "/items/" + ITEM_DTO_ID;
-    private static final String ID_NON_EXISTING = UUIDGenerator.buildSessionFactoryUniqueIdentifierGenerator().toString();
-    private static final String ITEM_DTO_URL_ID_NON_EXISTING = "/items/" + ID_NON_EXISTING;
-    private static final ItemListDTO ITEM_LIST_DTO = getExpectedItemListDTO();
+    private static final ItemListDTO ITEM_LIST_DTO = getExpectedItemListDTOFromItem(ITEM);
     private static final boolean DELETE_SUCCESS_TRUE = true;
     private static final boolean DELETE_SUCCESS_FALSE = false;
     private static final String DELETE_MESSAGE_TRUE = "File deleted";
     private static final String DELETE_MESSAGE_FALSE = "Deletion failed";
-    private static final ItemDTO ITEM_DTO_FIELDS_NULL = getExpectedItemDTOWithNullFields();
 
     @BeforeEach
     void setUp() {
@@ -54,13 +57,12 @@ class ItemControllerTest extends AbstractRestControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(itemController).build();
     }
 
-
     @Test
     void shouldDisplayListOfAllFilesUploadedAndSavedInDB() throws Exception {
 
         List<ItemListDTO> itemsList = new ArrayList<>();
-        itemsList.add(getExpectedItemListDTO());
-        itemsList.add(getExpectedItemListDTO());
+        itemsList.add(ITEM_LIST_DTO);
+        itemsList.add(ITEM_LIST_DTO);
 
         when(itemService.findAll()).thenReturn(itemsList);
 
@@ -92,7 +94,9 @@ class ItemControllerTest extends AbstractRestControllerTest {
     @Test
     void shouldDisplayNotFoundWhenItemByIdDoesNotExistInDB() throws Exception {
 
-        mockMvc.perform(get(ITEM_DTO_URL_ID_NON_EXISTING)
+        when(itemService.findById(anyString())).thenReturn(Optional.ofNullable(null));
+
+        mockMvc.perform(get(ITEM_DTO_URL)
                 .accept(APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -120,11 +124,11 @@ class ItemControllerTest extends AbstractRestControllerTest {
     @Test
     void shouldReturnSuccessFalseForDeleteItemByIdWhenItemDoesNotExistInDB() throws Exception {
 
-        when(itemService.findById(anyString())).thenReturn(Optional.empty());
+        when(itemService.findById(anyString())).thenReturn(Optional.ofNullable(null));
 
-        mockMvc.perform(delete(ITEM_DTO_URL_ID_NON_EXISTING + "/delete")
+        mockMvc.perform(delete(ITEM_DTO_URL + "/delete")
                 .accept(APPLICATION_JSON)
-                .param("id", ID_NON_EXISTING)
+                .param("id", ITEM_DTO_ID)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.success", equalTo(DELETE_SUCCESS_FALSE)))
@@ -151,44 +155,13 @@ class ItemControllerTest extends AbstractRestControllerTest {
     @Test
     void shouldReturnNotFoundWhenDownloadFileForItemByIdWhenItemDoesNotExistInDB() throws Exception {
 
-        when(itemService.findById(anyString())).thenReturn(Optional.empty());
+        when(itemService.findById(anyString())).thenReturn(Optional.ofNullable(null));
 
-        mockMvc.perform(get(ITEM_DTO_URL_ID_NON_EXISTING + "/download")
+        mockMvc.perform(get(ITEM_DTO_URL + "/download")
                 .accept(APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
 
         verify(itemService, times(1)).findById(anyString());
-    }
-
-
-    private static ItemDTO getExpectedItemDTO() {
-        return ItemDTO.builder()
-                .id(new UUIDGenerator().toString())
-                .name("file.jpg")
-                .data("this is file".getBytes())
-                .description("description")
-                .size(Long.valueOf(3457))
-                .uploadDate(LocalDate.of(2021, 4, 8))
-                .build();
-    }
-
-    private static ItemListDTO getExpectedItemListDTO() {
-        return ItemListDTO.builder()
-                .id(getExpectedItemDTO().getId())
-                .name("file.jpg")
-                .size(Long.valueOf(3457))
-                .build();
-    }
-
-    private static ItemDTO getExpectedItemDTOWithNullFields() {
-        return ItemDTO.builder()
-                .id(null)
-                .name(null)
-                .data(null)
-                .description(null)
-                .size(null)
-                .uploadDate(null)
-                .build();
     }
 }

@@ -19,20 +19,20 @@ import java.time.LocalDate;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("/")
-@AllArgsConstructor
 public class ItemController {
 
-    ItemServiceImpl itemService;
-    ItemMapper itemMapper;
+    private final ItemServiceImpl itemService;
+//    ItemMapper itemMapper;
 
     @PostMapping(value = "/upload",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE},
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public UploadResponseDTO upload(@RequestPart(name = "file") MultipartFile file,
-                                    @RequestParam(name = "description") Optional<String> description) throws IOException {
+    public UploadResponseDTO upload(@RequestPart(name = "file") final MultipartFile file,
+                                    @RequestParam(name = "description") final Optional<String> description) throws IOException {
 
         UploadResponseDTO uploadResponseDTO = new UploadResponseDTO();
 
@@ -44,9 +44,9 @@ public class ItemController {
                     .description(description.orElseGet(() -> "not provided"))
                     .uploadDate(LocalDate.now())
                     .build();
-            itemDTO = itemService.store(itemDTO);
+            ItemDTO savedItemDTO = itemService.store(itemDTO);
             uploadResponseDTO.setSuccess(true);
-            uploadResponseDTO.setItemDTO(itemDTO);
+            uploadResponseDTO.setItemDTO(savedItemDTO);
         }
         return uploadResponseDTO;
     }
@@ -59,7 +59,7 @@ public class ItemController {
 
     @GetMapping("/items/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity item(@PathVariable(name = "id") String id) {
+    public ResponseEntity item(@PathVariable(name = "id") final String id) {
 
         return itemService.findById(id)
                 .map(itemDTO -> ResponseEntity.ok(itemDTO))
@@ -67,7 +67,7 @@ public class ItemController {
     }
 
     @DeleteMapping("/items/{id}/delete")
-    public ResponseEntity delete(@PathVariable(name = "id") String id) {
+    public ResponseEntity delete(@PathVariable(name = "id") final String id) {
 
         DeleteResponseDTO deleteResponseDTO = new DeleteResponseDTO();
 
@@ -84,7 +84,7 @@ public class ItemController {
     }
 
     @GetMapping("/items/{id}/download")
-    public ResponseEntity<byte[]> download(@PathVariable(name = "id") String id) {
+    public ResponseEntity<byte[]> download(@PathVariable(name = "id") final String id) {
 
         return itemService.findById(id)
                 .map(itemDTO -> ResponseEntity.ok()
