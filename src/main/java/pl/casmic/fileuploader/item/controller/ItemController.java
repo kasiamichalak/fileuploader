@@ -11,13 +11,11 @@ import pl.casmic.fileuploader.item.dto.DeleteResponseDTO;
 import pl.casmic.fileuploader.item.dto.ItemDTO;
 import pl.casmic.fileuploader.item.dto.ItemsDTO;
 import pl.casmic.fileuploader.item.dto.UploadResponseDTO;
-import pl.casmic.fileuploader.item.mapper.ItemMapper;
 import pl.casmic.fileuploader.item.service.ItemServiceImpl;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 
 @AllArgsConstructor
 @RestController
@@ -51,7 +49,7 @@ public class ItemController {
         return uploadResponseDTO;
     }
 
-    @GetMapping("/items")
+    @GetMapping(value = "/items", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ItemsDTO items() {
         return new ItemsDTO(itemService.findAll());
@@ -66,7 +64,7 @@ public class ItemController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/items/{id}/delete")
+    @DeleteMapping(value = "/items/{id}/delete", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity delete(@PathVariable(name = "id") final String id) {
 
         DeleteResponseDTO deleteResponseDTO = new DeleteResponseDTO();

@@ -1,6 +1,5 @@
 package pl.casmic.fileuploader.item.mapper;
 
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.id.UUIDGenerator;
 import org.junit.jupiter.api.Test;
 import pl.casmic.fileuploader.item.ItemGeneratorForTests;
@@ -8,9 +7,8 @@ import pl.casmic.fileuploader.item.domain.Item;
 import pl.casmic.fileuploader.item.dto.ItemDTO;
 import pl.casmic.fileuploader.item.dto.ItemListDTO;
 
-import static pl.casmic.fileuploader.item.ItemGeneratorForTests.*;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static pl.casmic.fileuploader.item.ItemGeneratorForTests.*;
 
 class ItemMapperTest implements ItemGeneratorForTests {
 
