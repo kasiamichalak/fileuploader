@@ -73,7 +73,7 @@ public class ItemHtmlController {
         ItemDTO itemDTO = itemService.findById(id)
                 .orElseThrow(ResourceNotFoundException::new);
 
-        model.addAttribute("itemDTO", itemDTO);
+        model.addAttribute("item", itemDTO);
 
         return "item/item";
     }
