@@ -26,10 +26,13 @@ public class ItemHtmlController {
 
     private final ItemServiceImpl itemService;
 
-    @PostMapping(value = "/upload")
+    @PostMapping(value = "/upload",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE},
+            produces = {MediaType.TEXT_HTML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.ACCEPTED)
+//    @ResponseBody
     public String upload(@RequestPart(name = "file") final MultipartFile file,
-                                    @RequestParam(name = "description") final Optional<String> description, Model model) throws IOException {
+                         @RequestParam(name = "description") final Optional<String> description, Model model) throws IOException {
 
         UploadResponseDTO uploadResponseDTO = new UploadResponseDTO();
 
@@ -45,14 +48,16 @@ public class ItemHtmlController {
             uploadResponseDTO.setSuccess(true);
             uploadResponseDTO.setItemDTO(savedItemDTO);
         }
+//        return uploadResponseDTO;
         model.addAttribute("uploadResponse", uploadResponseDTO);
         return "item/uploadresponse";
-//        return "redirect:/upload";
     }
 
-//    @GetMapping(value = "/upload")
+//    @GetMapping(value = "/upload",
+//            produces = MediaType.TEXT_HTML_VALUE)
 //    @ResponseStatus(HttpStatus.ACCEPTED)
-//    public String upload(Model model, UploadResponseDTO uploadResponseDTO) {
+//    public String upload(Model model, UploadResponseDTO uploadResponseDTO, ) {
+//        uploadResponseDTO = upload();
 //        model.addAttribute("uploadResponse", uploadResponseDTO);
 //        return "item/uploadresponse";
 //    }
