@@ -1,6 +1,7 @@
 package pl.casmic.fileuploader.item.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -59,14 +60,18 @@ public class ItemHtmlController {
 //        return new ItemsDTO(itemService.findAll());
 //    }
 //
-//    @GetMapping("/items/{id}")
-//    @ResponseStatus(HttpStatus.OK)
-//    public ResponseEntity item(@PathVariable(name = "id") final String id) {
-//
-//        return itemService.findById(id)
-//                .map(itemDTO -> ResponseEntity.ok(itemDTO))
-//                .orElse(ResponseEntity.notFound().build());
-//    }
+    @GetMapping(value = "/items/{id}",
+            produces = {MediaType.TEXT_HTML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @ResponseStatus(HttpStatus.OK)
+    public String item(@PathVariable(name = "id") final String id, Model model) {
+
+        ItemDTO itemDTO = itemService.findById(id)
+                .orElseThrow(ResourceNotFoundException::new);
+
+        model.addAttribute("itemDTO", itemDTO);
+
+        return "item/item";
+    }
 //
 //    @DeleteMapping(value = "/items/{id}/delete", produces = MediaType.APPLICATION_JSON_VALUE)
 //    public ResponseEntity delete(@PathVariable(name = "id") final String id) {

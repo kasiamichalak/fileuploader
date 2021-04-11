@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div>
+    <div th:text="'itemID:' + ${itemDTO.id}">itemID: </div>
+    <div th:text="'itemName:' + ${itemDTO.name}">itemName: </div>
+    <div th:text="'description:' + ${itemDTO.description}">description: </div>
+    <div th:text="'date:' + ${itemDTO.uploadDate}">date: </div>
+</div>
+</body>
+</html>
