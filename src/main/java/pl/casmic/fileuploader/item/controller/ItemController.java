@@ -18,12 +18,11 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 @AllArgsConstructor
-@RestController
+//@RestController
 @RequestMapping("/")
 public class ItemController {
 
     private final ItemServiceImpl itemService;
-//    ItemMapper itemMapper;
 
     @PostMapping(value = "/upload",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE},

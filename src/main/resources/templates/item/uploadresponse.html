@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div>
+        <div th:text="'Success:' + ${uploadResponse.success}">Success: </div>
+        <div th:text="'Item:'">Item: </div>
+        <div th:text="'itemID:' + ${uploadResponse.itemDTO.id}">itemID: </div>
+        <div th:text="'itemName:' + ${uploadResponse.itemDTO.name}">itemName: </div>
+        <div th:text="'description:' + ${uploadResponse.itemDTO.description}">description: </div>
+        <div th:text="'date:' + ${uploadResponse.itemDTO.uploadDate}">date: </div>
+    </div>
+</body>
+</html>
