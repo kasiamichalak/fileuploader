@@ -11,14 +11,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pl.casmic.fileuploader.item.domain.Item;
-import pl.casmic.fileuploader.item.dto.DeleteResponseDTO;
-import pl.casmic.fileuploader.item.dto.ItemDTO;
-import pl.casmic.fileuploader.item.dto.ItemsDTO;
-import pl.casmic.fileuploader.item.dto.UploadResponseDTO;
+import pl.casmic.fileuploader.item.dto.*;
 import pl.casmic.fileuploader.item.service.ItemServiceImpl;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -51,15 +49,22 @@ public class ItemHtmlController {
         }
         model.addAttribute("success", success);
         model.addAttribute("itemDTO", itemDTO);
+
         return "item/uploadresponse";
     }
 
-//    @GetMapping(value = "/items", produces = MediaType.APPLICATION_JSON_VALUE)
-//    @ResponseStatus(HttpStatus.OK)
-//    public ItemsDTO items() {
-//        return new ItemsDTO(itemService.findAll());
-//    }
-//
+    @GetMapping(value = "/items",
+            produces = {MediaType.TEXT_HTML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @ResponseStatus(HttpStatus.OK)
+    public String items(Model model) {
+
+        List<ItemListDTO> itemsDTO = itemService.findAll();
+
+        model.addAttribute("items", itemsDTO);
+
+        return "item/items";
+    }
+
     @GetMapping(value = "/items/{id}",
             produces = {MediaType.TEXT_HTML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.OK)
