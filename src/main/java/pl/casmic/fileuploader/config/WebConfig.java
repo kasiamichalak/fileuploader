@@ -1,8 +1,10 @@
 package pl.casmic.fileuploader.config;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
@@ -27,6 +29,13 @@ public class WebConfig implements WebMvcConfigurer {
         final JsonViewResolver resolver = new JsonViewResolver();
         return resolver;
     }
+
+//    @Bean
+//    public Jackson2ObjectMapperBuilder jacksonBuilder() {
+//        Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
+//        builder.featuresToEnable(DeserializationFeature.UNWRAP_ROOT_VALUE);
+//        return builder;
+//    }
 
     @Override
     public void configureContentNegotiation(final ContentNegotiationConfigurer configurer) {

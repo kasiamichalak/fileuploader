@@ -1,5 +1,7 @@
 package pl.casmic.fileuploader.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;

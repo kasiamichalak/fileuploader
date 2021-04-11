@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import pl.casmic.fileuploader.item.domain.Item;
 import pl.casmic.fileuploader.item.dto.DeleteResponseDTO;
 import pl.casmic.fileuploader.item.dto.ItemDTO;
 import pl.casmic.fileuploader.item.dto.ItemsDTO;
@@ -30,37 +31,27 @@ public class ItemHtmlController {
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE},
             produces = {MediaType.TEXT_HTML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.ACCEPTED)
-//    @ResponseBody
     public String upload(@RequestPart(name = "file") final MultipartFile file,
                          @RequestParam(name = "description") final Optional<String> description, Model model) throws IOException {
 
-        UploadResponseDTO uploadResponseDTO = new UploadResponseDTO();
+        ItemDTO itemDTO = new ItemDTO();
+        boolean success = false;
 
         if (file.getSize() != 0) {
-            ItemDTO itemDTO = ItemDTO.builder()
+            itemDTO = ItemDTO.builder()
                     .name(file.getOriginalFilename())
                     .data(file.getBytes())
                     .size(file.getSize())
                     .description(description.orElseGet(() -> "not provided"))
                     .uploadDate(LocalDate.now())
                     .build();
-            ItemDTO savedItemDTO = itemService.store(itemDTO);
-            uploadResponseDTO.setSuccess(true);
-            uploadResponseDTO.setItemDTO(savedItemDTO);
+            itemDTO = itemService.store(itemDTO);
+            success = true;
         }
-//        return uploadResponseDTO;
-        model.addAttribute("uploadResponse", uploadResponseDTO);
+        model.addAttribute("success", success);
+        model.addAttribute("itemDTO", itemDTO);
         return "item/uploadresponse";
     }
-
-//    @GetMapping(value = "/upload",
-//            produces = MediaType.TEXT_HTML_VALUE)
-//    @ResponseStatus(HttpStatus.ACCEPTED)
-//    public String upload(Model model, UploadResponseDTO uploadResponseDTO, ) {
-//        uploadResponseDTO = upload();
-//        model.addAttribute("uploadResponse", uploadResponseDTO);
-//        return "item/uploadresponse";
-//    }
 
 //    @GetMapping(value = "/items", produces = MediaType.APPLICATION_JSON_VALUE)
 //    @ResponseStatus(HttpStatus.OK)

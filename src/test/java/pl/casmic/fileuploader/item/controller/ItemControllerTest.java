@@ -2,6 +2,7 @@ package pl.casmic.fileuploader.item.controller;
 
 import org.hibernate.id.UUIDGenerator;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -29,7 +30,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static pl.casmic.fileuploader.item.ItemGeneratorForTests.*;
-
+@Disabled
 class ItemControllerTest extends AbstractRestControllerTest implements ItemGeneratorForTests {
 
     @Mock

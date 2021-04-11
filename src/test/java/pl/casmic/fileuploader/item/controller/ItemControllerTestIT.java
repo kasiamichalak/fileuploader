@@ -3,6 +3,7 @@ package pl.casmic.fileuploader.item.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.hibernate.id.UUIDGenerator;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -27,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static pl.casmic.fileuploader.item.ItemGeneratorForTests.*;
 
+@Disabled
 @SpringBootTest
 class ItemControllerTestIT extends AbstractRestControllerTest implements ItemGeneratorForTests {
 
