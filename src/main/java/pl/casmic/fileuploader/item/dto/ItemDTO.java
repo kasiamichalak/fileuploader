@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonRootName(value = "item")
+//@JsonRootName(value = "item")
 @JsonPropertyOrder({"id", "name", "description", "date"})
 public class ItemDTO {
 

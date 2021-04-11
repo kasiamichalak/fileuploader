@@ -10,7 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import pl.casmic.fileuploader.item.domain.Item;
 import pl.casmic.fileuploader.item.dto.*;
 import pl.casmic.fileuploader.item.service.ItemServiceImpl;
 
@@ -48,9 +47,9 @@ public class ItemHtmlController {
             success = true;
         }
         model.addAttribute("success", success);
-        model.addAttribute("itemDTO", itemDTO);
+        model.addAttribute("item", itemDTO);
 
-        return "item/uploadresponse";
+        return "item/upload";
     }
 
     @GetMapping(value = "/items",
@@ -75,34 +74,43 @@ public class ItemHtmlController {
 
         model.addAttribute("item", itemDTO);
 
+//        model.addAttribute("itemID", itemDTO.getId());
+//        model.addAttribute("itemName", itemDTO.getName());
+//        model.addAttribute("description", itemDTO.getDescription());
+//        model.addAttribute("date", itemDTO.getUploadDate());
+
         return "item/item";
     }
-//
-//    @DeleteMapping(value = "/items/{id}/delete", produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity delete(@PathVariable(name = "id") final String id) {
-//
-//        DeleteResponseDTO deleteResponseDTO = new DeleteResponseDTO();
-//
-//        return itemService.findById(id).map(itemDTO -> {
-//            itemService.delete(id);
-//            deleteResponseDTO.setSuccess(true);
-//            deleteResponseDTO.setMessage("File deleted");
-//            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deleteResponseDTO);
-//        }).orElseGet(() -> {
-//            deleteResponseDTO.setSuccess(false);
-//            deleteResponseDTO.setMessage("Deletion failed");
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(deleteResponseDTO);
-//        });
-//    }
-//
-//    @GetMapping("/items/{id}/download")
-//    public ResponseEntity<byte[]> download(@PathVariable(name = "id") final String id) {
-//
-//        return itemService.findById(id)
-//                .map(itemDTO -> ResponseEntity.ok()
-//                        .header(HttpHeaders.CONTENT_DISPOSITION,
-//                        "attachment; filename=\"" + itemDTO.getName() + "\"")
-//                        .body(itemDTO.getData()))
-//                .orElse(ResponseEntity.notFound().build());
-//    }
+
+    @DeleteMapping(value = "/items/{id}/delete",
+            produces = {MediaType.TEXT_HTML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @ResponseStatus(HttpStatus.OK)
+    public String delete(@PathVariable(name = "id") final String id, Model model) {
+
+        boolean success = false;
+        String message = "Deletion failed";
+
+        if(itemService.findById(id).isPresent()) {
+            itemService.delete(id);
+            success = true;
+            message = "File deleted";
+        }
+
+        model.addAttribute("success", success);
+        model.addAttribute("message", message);
+
+        return "item/delete";
+    }
+
+    @GetMapping("/items/{id}/download")
+    @ResponseBody
+    public ResponseEntity<byte[]> download(@PathVariable(name = "id") final String id) {
+
+        return itemService.findById(id)
+                .map(itemDTO -> ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + itemDTO.getName() + "\"")
+                        .body(itemDTO.getData()))
+                .orElse(ResponseEntity.notFound().build());
+    }
 }

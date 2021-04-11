@@ -7,9 +7,9 @@
 <body>
 <div>
     <ul th:each="itemListDTO:${items}">
-        <li th:text="'itemID:' + *{itemListDTO.id}">itemID:</li>
-        <li th:text="'itemName:' + *{itemListDTO.name}">itemName:</li>
-        <li th:text="'itemSize:' + *{itemListDTO.size}">itemSize:</li>
+        <li th:text="'itemID: ' + *{itemListDTO.id}">itemID:</li>
+        <li th:text="'itemName: ' + *{itemListDTO.name}">itemName:</li>
+        <li th:text="'itemSize: ' + *{itemListDTO.size}">itemSize:</li>
     </ul>
 </div>
 </body>
