@@ -33,6 +33,7 @@ public class ItemHtmlController {
                          @RequestParam(name = "description") final Optional<String> description, Model model) throws IOException {
 
         ItemDTO itemDTO = new ItemDTO();
+        itemDTO.setId(null);
         boolean success = false;
 
         if (file.getSize() != 0) {
@@ -66,6 +67,7 @@ public class ItemHtmlController {
 
     @GetMapping(value = "/items/{id}",
             produces = {MediaType.TEXT_HTML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+//            params = {"html", "json"})
     @ResponseStatus(HttpStatus.OK)
     public String item(@PathVariable(name = "id") final String id, Model model) {
 
@@ -90,7 +92,7 @@ public class ItemHtmlController {
         boolean success = false;
         String message = "Deletion failed";
 
-        if(itemService.findById(id).isPresent()) {
+        if (itemService.findById(id).isPresent()) {
             itemService.delete(id);
             success = true;
             message = "File deleted";
@@ -109,8 +111,9 @@ public class ItemHtmlController {
         return itemService.findById(id)
                 .map(itemDTO -> ResponseEntity.ok()
                         .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\"" + itemDTO.getName() + "\"")
+                                "attachment; filename=\"" + itemDTO.getName() + "\"")
                         .body(itemDTO.getData()))
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(ResourceNotFoundException::new);
+//                .orElse(ResponseEntity.notFound().build());
     }
 }

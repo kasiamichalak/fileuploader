@@ -2,6 +2,7 @@ package pl.casmic.fileuploader.item.service;
 
 import org.hibernate.id.UUIDGenerator;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -12,15 +13,16 @@ import pl.casmic.fileuploader.item.dto.ItemListDTO;
 import pl.casmic.fileuploader.item.mapper.ItemMapper;
 import pl.casmic.fileuploader.item.repository.ItemRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static pl.casmic.fileuploader.item.ItemGeneratorForTests.*;
-
 
 class ItemServiceImplTest implements ItemGeneratorForTests {
 
@@ -29,8 +31,9 @@ class ItemServiceImplTest implements ItemGeneratorForTests {
     private ItemServiceImpl itemService;
     private ItemMapper itemMapper = ItemMapper.ITEM_MAPPER;
 
-    private static final String ID = UUIDGenerator.buildSessionFactoryUniqueIdentifierGenerator().toString();
-    private static final Item ITEM = getExpectedItem(ID);
+    private static final String ID = UUID.randomUUID().toString();
+    private static final LocalDate UPLOAD_DATE = LocalDate.of(2021, 04, 13);
+    private static final Item ITEM = getExpectedItem(ID, UPLOAD_DATE);
     private static final String ITEM_ID = ITEM.getId();
     private static final ItemDTO ITEM_DTO = getExpectedItemDTOFromItem(ITEM);
     private static final List<ItemListDTO> LIST_ITEM_LIST_DTOS = getExpectedListOfItemListDTOs();

@@ -8,28 +8,26 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public interface ItemGeneratorForTests {
 
-    static Item getExpectedItem(String id) {
+    static Item getExpectedItem(String id, LocalDate date) {
         return Item.builder()
                 .id(id)
                 .name("file.jpg")
                 .data("this is file".getBytes())
                 .description("description")
                 .size(Long.valueOf(3457))
-                .uploadDate(LocalDate.of(2021, 4, 8))
+                .uploadDate(date)
                 .build();
     }
 
     static ItemDTO getExpectedItemDTOFromItem(Item item) {
 
-        item = getExpectedItem(item.getId());
-
         return ItemDTO.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .data(item.getData())
-                .data("this is file".getBytes())
                 .description(item.getDescription())
                 .size(item.getSize())
                 .uploadDate(item.getUploadDate())
@@ -38,12 +36,10 @@ public interface ItemGeneratorForTests {
 
     static ItemDTO getExpectedItemDTOFromItemWithDefaultDescription(Item item, String description) {
 
-        item = getExpectedItem(item.getId());
-
         return ItemDTO.builder()
                 .id(item.getId())
                 .name(item.getName())
-                .data("this is file".getBytes())
+                .data(item.getData())
                 .description(description)
                 .size(item.getSize())
                 .uploadDate(item.getUploadDate())
@@ -51,8 +47,6 @@ public interface ItemGeneratorForTests {
     }
 
     static ItemListDTO getExpectedItemListDTOFromItem(Item item) {
-
-        item = getExpectedItem(item.getId());
 
         return ItemListDTO.builder()
                 .id(item.getId())

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -16,31 +17,36 @@ import pl.casmic.fileuploader.item.dto.ItemDTO;
 import pl.casmic.fileuploader.item.dto.ItemListDTO;
 import pl.casmic.fileuploader.item.service.ItemServiceImpl;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static pl.casmic.fileuploader.item.ItemGeneratorForTests.*;
-@Disabled
-class ItemControllerTest extends AbstractRestControllerTest implements ItemGeneratorForTests {
+
+
+class ItemControllerHtmlResponseTest extends AbstractItemControllerTest implements ItemGeneratorForTests {
 
     @Mock
     private ItemServiceImpl itemService;
     @InjectMocks
-    private ItemController itemController;
+    private ItemHtmlController itemController;
     private MockMvc mockMvc;
 
-    private static final String ID = UUIDGenerator.buildSessionFactoryUniqueIdentifierGenerator().toString();
-    private static final Item ITEM = getExpectedItem(ID);
+    private static final String JSON = "json";
+    private static final String ID = UUID.randomUUID().toString();
+    private static final LocalDate UPLOAD_DATE = LocalDate.of(2021, 04, 13);
+    private static final Item ITEM = getExpectedItem(ID, UPLOAD_DATE);
     private static final ItemDTO ITEM_DTO = getExpectedItemDTOFromItem(ITEM);
     private static final String ITEM_DTO_ID = ITEM_DTO.getId();
     private static final String ITEM_DTO_URL = "/items/" + ITEM_DTO_ID;
@@ -57,7 +63,7 @@ class ItemControllerTest extends AbstractRestControllerTest implements ItemGener
     }
 
     @Test
-    void shouldDisplayListOfAllFilesUploadedAndSavedInDB() throws Exception {
+    void shouldDisplayListOfAllFilesUploadedAndSavedInDBHtml() throws Exception {
 
         List<ItemListDTO> itemsList = new ArrayList<>();
         itemsList.add(ITEM_LIST_DTO);
@@ -66,100 +72,95 @@ class ItemControllerTest extends AbstractRestControllerTest implements ItemGener
         when(itemService.findAll()).thenReturn(itemsList);
 
         mockMvc.perform(get("/items")
-                .accept(APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.TEXT_HTML_VALUE))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.items", hasSize(2)));
+                .andExpect(view().name("item/items"))
+                .andExpect(model().attributeExists("items"));
 
         verify(itemService, times(1)).findAll();
-
     }
 
     @Test
-    void shouldDisplayItemByIdWhenItemExistsInDB() throws Exception {
+    void shouldDisplayItemByIdWhenItemExistsInDBHtml() throws Exception {
 
         when(itemService.findById(anyString())).thenReturn(Optional.of(ITEM_DTO));
 
         mockMvc.perform(get(ITEM_DTO_URL)
-                .accept(APPLICATION_JSON)
-                .content(String.valueOf(ITEM_LIST_DTO))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .contentType(MediaType.TEXT_HTML_VALUE))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(view().name("item/item"))
+                .andExpect(model().attributeExists("item"));
 
         verify(itemService, times(1)).findById(anyString());
-
     }
 
     @Test
-    void shouldDisplayNotFoundWhenItemByIdDoesNotExistInDB() throws Exception {
+    void shouldDisplayNotFoundWhenItemByIdDoesNotExistInDBHtml() throws Exception {
 
         when(itemService.findById(anyString())).thenReturn(Optional.ofNullable(null));
 
         mockMvc.perform(get(ITEM_DTO_URL)
-                .accept(APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+                .contentType(MediaType.TEXT_HTML_VALUE))
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotFoundException));
 
         verify(itemService, times(1)).findById(anyString());
     }
 
     @Test
-    void shouldReturnSuccessTrueForDeleteItemByIdWhenItemExistsInDB() throws Exception {
+    void shouldReturnSuccessTrueForDeleteItemByIdWhenItemExistsInDBHtml() throws Exception {
 
         when(itemService.findById(anyString())).thenReturn(Optional.ofNullable(ITEM_DTO));
 
         mockMvc.perform(delete(ITEM_DTO_URL + "/delete")
-                .accept(APPLICATION_JSON)
-                .param("id", ITEM_DTO_ID)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent())
-                .andExpect(jsonPath("$.success", equalTo(DELETE_SUCCESS_TRUE)))
-                .andExpect(jsonPath("$.message", equalTo(DELETE_MESSAGE_TRUE)));
+                .contentType(MediaType.TEXT_HTML_VALUE))
+                .andExpect(status().isOk())
+                .andExpect(view().name("item/delete"))
+                .andExpect(model().attribute("success", DELETE_SUCCESS_TRUE))
+                .andExpect(model().attribute("message", DELETE_MESSAGE_TRUE));
 
         verify(itemService, times(1)).findById(anyString());
         verify(itemService, times(1)).delete(anyString());
     }
 
     @Test
-    void shouldReturnSuccessFalseForDeleteItemByIdWhenItemDoesNotExistInDB() throws Exception {
-
+    void shouldReturnSuccessFalseForDeleteItemByIdWhenItemDoesNotExistInDBHtml() throws Exception {
+//TODO: status NotFound() zamiast isOK()
         when(itemService.findById(anyString())).thenReturn(Optional.ofNullable(null));
 
         mockMvc.perform(delete(ITEM_DTO_URL + "/delete")
-                .accept(APPLICATION_JSON)
-                .param("id", ITEM_DTO_ID)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.success", equalTo(DELETE_SUCCESS_FALSE)))
-                .andExpect(jsonPath("$.message", equalTo(DELETE_MESSAGE_FALSE)));
+                .contentType(MediaType.TEXT_HTML_VALUE))
+                .andExpect(status().isOk())
+                .andExpect(view().name("item/delete"))
+                .andExpect(model().attribute("success", DELETE_SUCCESS_FALSE))
+                .andExpect(model().attribute("message", DELETE_MESSAGE_FALSE));
 
         verify(itemService, times(1)).findById(anyString());
         verify(itemService, times(0)).delete(anyString());
     }
 
     @Test
-    void shouldDownloadFileForItemByIdWhenItemExistsInDB() throws Exception {
+    void shouldDownloadFileForItemByIdWhenItemExistsInDBHtml() throws Exception {
 
         when(itemService.findById(anyString())).thenReturn(Optional.of(ITEM_DTO));
 
         mockMvc.perform(get(ITEM_DTO_URL + "/download")
-                .accept(APPLICATION_JSON)
-                .content(ITEM_DTO.getData())
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.TEXT_HTML_VALUE))
                 .andExpect(status().isOk());
 
         verify(itemService, times(1)).findById(anyString());
     }
 
     @Test
-    void shouldReturnNotFoundWhenDownloadFileForItemByIdWhenItemDoesNotExistInDB() throws Exception {
+    void shouldReturnNotFoundWhenDownloadFileForItemByIdWhenItemDoesNotExistInDBHtml() throws Exception {
 
         when(itemService.findById(anyString())).thenReturn(Optional.ofNullable(null));
 
         mockMvc.perform(get(ITEM_DTO_URL + "/download")
-                .accept(APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+                .contentType(MediaType.TEXT_HTML_VALUE))
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotFoundException));
 
         verify(itemService, times(1)).findById(anyString());
     }
