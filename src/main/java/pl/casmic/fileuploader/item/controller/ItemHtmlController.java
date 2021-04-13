@@ -10,7 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import pl.casmic.fileuploader.item.dto.*;
+import pl.casmic.fileuploader.item.dto.ItemDTO;
+import pl.casmic.fileuploader.item.dto.ItemListDTO;
 import pl.casmic.fileuploader.item.service.ItemServiceImpl;
 
 import java.io.IOException;
@@ -67,7 +68,6 @@ public class ItemHtmlController {
 
     @GetMapping(value = "/items/{id}",
             produces = {MediaType.TEXT_HTML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-//            params = {"html", "json"})
     @ResponseStatus(HttpStatus.OK)
     public String item(@PathVariable(name = "id") final String id, Model model) {
 
@@ -75,11 +75,6 @@ public class ItemHtmlController {
                 .orElseThrow(ResourceNotFoundException::new);
 
         model.addAttribute("item", itemDTO);
-
-//        model.addAttribute("itemID", itemDTO.getId());
-//        model.addAttribute("itemName", itemDTO.getName());
-//        model.addAttribute("description", itemDTO.getDescription());
-//        model.addAttribute("date", itemDTO.getUploadDate());
 
         return "item/item";
     }
@@ -114,6 +109,5 @@ public class ItemHtmlController {
                                 "attachment; filename=\"" + itemDTO.getName() + "\"")
                         .body(itemDTO.getData()))
                 .orElseThrow(ResourceNotFoundException::new);
-//                .orElse(ResponseEntity.notFound().build());
     }
 }

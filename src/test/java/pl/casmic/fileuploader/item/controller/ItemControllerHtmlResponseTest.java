@@ -1,8 +1,6 @@
 package pl.casmic.fileuploader.item.controller;
 
-import org.hibernate.id.UUIDGenerator;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -23,7 +21,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -31,7 +28,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static pl.casmic.fileuploader.item.ItemGeneratorForTests.*;
 
 
@@ -126,7 +122,7 @@ class ItemControllerHtmlResponseTest extends AbstractItemControllerTest implemen
 
     @Test
     void shouldReturnSuccessFalseForDeleteItemByIdWhenItemDoesNotExistInDBHtml() throws Exception {
-//TODO: status NotFound() zamiast isOK()
+
         when(itemService.findById(anyString())).thenReturn(Optional.ofNullable(null));
 
         mockMvc.perform(delete(ITEM_DTO_URL + "/delete")
