@@ -113,7 +113,7 @@ class ItemControllerJsonResponseTest extends AbstractItemControllerTest implemen
 
         when(itemService.findById(anyString())).thenReturn(Optional.ofNullable(ITEM_DTO));
 
-        mockMvc.perform(delete(ITEM_DTO_URL + "/delete")
+        mockMvc.perform(get(ITEM_DTO_URL + "/delete")
                 .param(RESPONSE_FORMAT, JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success", equalTo(DELETE_SUCCESS_TRUE)))
@@ -128,7 +128,7 @@ class ItemControllerJsonResponseTest extends AbstractItemControllerTest implemen
 
         when(itemService.findById(anyString())).thenReturn(Optional.ofNullable(null));
 
-        mockMvc.perform(delete(ITEM_DTO_URL + "/delete")
+        mockMvc.perform(get(ITEM_DTO_URL + "/delete")
                 .param(RESPONSE_FORMAT, JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.success", equalTo(DELETE_SUCCESS_FALSE)))

@@ -118,7 +118,7 @@ class ItemControllerHtmlResponseTest extends AbstractItemControllerTest implemen
 
         when(itemService.findById(anyString())).thenReturn(Optional.ofNullable(ITEM_DTO));
 
-        mockMvc.perform(delete(ITEM_DTO_URL + "/delete")
+        mockMvc.perform(get(ITEM_DTO_URL + "/delete")
                 .contentType(MediaType.TEXT_HTML_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(view().name("item/delete"))
@@ -134,7 +134,7 @@ class ItemControllerHtmlResponseTest extends AbstractItemControllerTest implemen
 
         when(itemService.findById(anyString())).thenReturn(Optional.ofNullable(null));
 
-        mockMvc.perform(delete(ITEM_DTO_URL + "/delete")
+        mockMvc.perform(get(ITEM_DTO_URL + "/delete")
                 .contentType(MediaType.TEXT_HTML_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(view().name("item/delete"))

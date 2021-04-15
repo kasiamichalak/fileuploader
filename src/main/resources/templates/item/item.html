@@ -11,5 +11,11 @@
     <div th:text="'description: ' + ${item.description}">description: </div>
     <div th:text="'date: ' + ${item.uploadDate}">date: </div>
 </div>
+<div>
+    <a href="#" th:href="@{'/items/' + ${item.id} + '/download'}">Download</a>
+</div>
+<div>
+    <a href="#" th:href="@{'/items/' + ${item.id} + '/delete'}">Delete</a>
+</div>
 </body>
 </html>

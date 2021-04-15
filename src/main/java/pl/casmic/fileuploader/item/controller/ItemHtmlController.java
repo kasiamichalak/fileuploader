@@ -85,7 +85,7 @@ public class ItemHtmlController {
         return "item/item";
     }
 
-    @DeleteMapping(value = "/items/{id}/delete",
+    @GetMapping(value = "/items/{id}/delete",
             produces = {MediaType.TEXT_HTML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.OK)
     public String delete(@PathVariable(name = "id") final String id, Model model) {
