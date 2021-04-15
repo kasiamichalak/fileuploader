@@ -59,6 +59,15 @@ class ItemControllerHtmlResponseTest extends AbstractItemControllerTest implemen
     }
 
     @Test
+    void shouldDisplayUploadFormHtml() throws Exception {
+
+        mockMvc.perform(get("/")
+                .contentType(MediaType.TEXT_HTML_VALUE))
+                .andExpect(status().isOk())
+                .andExpect(view().name("item/uploadform"));
+    }
+
+    @Test
     void shouldDisplayListOfAllFilesUploadedAndSavedInDBHtml() throws Exception {
 
         List<ItemListDTO> itemsList = new ArrayList<>();

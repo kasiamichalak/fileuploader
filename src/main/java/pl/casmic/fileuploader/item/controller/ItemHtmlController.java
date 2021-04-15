@@ -26,6 +26,12 @@ public class ItemHtmlController {
 
     private final ItemServiceImpl itemService;
 
+    @GetMapping(produces = MediaType.TEXT_HTML_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public String displayUploadForm() {
+        return "item/uploadform";
+    }
+
     @PostMapping(value = "/upload",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE},
             produces = {MediaType.TEXT_HTML_VALUE, MediaType.APPLICATION_JSON_VALUE})
