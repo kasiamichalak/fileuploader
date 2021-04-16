@@ -1,6 +1,7 @@
 package pl.casmic.fileuploader.item.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.hamcrest.Matcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,7 @@ import pl.casmic.fileuploader.item.domain.Item;
 import pl.casmic.fileuploader.item.dto.ItemDTO;
 import pl.casmic.fileuploader.item.service.ItemServiceImpl;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -48,7 +50,7 @@ class ItemControllerUploadTestWithWebAppContext extends AbstractItemControllerTe
     private static final String DESCRIPTION_PARAM_NULL = null;
     private static final String DESCRIPTION_DEFAULT = "not provided";
     private static final String ID = UUID.randomUUID().toString();
-    private static final LocalDate UPLOAD_DATE = LocalDate.of(2021, 04, 13);
+    private static final Instant UPLOAD_DATE = Instant.EPOCH;
     private static final Item ITEM = getExpectedItem(ID, UPLOAD_DATE);
     private final static ItemDTO ITEM_DTO_WITH_DESCRIPTION = getExpectedItemDTOFromItem(ITEM);
     private final static ItemDTO ITEM_DTO_DEFAULT_DESCRIPTION = getExpectedItemDTOFromItemWithDefaultDescription(ITEM, DESCRIPTION_DEFAULT);

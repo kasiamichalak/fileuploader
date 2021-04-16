@@ -4,6 +4,7 @@ import pl.casmic.fileuploader.item.domain.Item;
 import pl.casmic.fileuploader.item.dto.ItemDTO;
 import pl.casmic.fileuploader.item.dto.ItemListDTO;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
 
 public interface ItemGeneratorForTests {
 
-    static Item getExpectedItem(String id, LocalDate date) {
+    static Item getExpectedItem(String id, Instant date) {
         return Item.builder()
                 .id(id)
                 .name("file.jpg")

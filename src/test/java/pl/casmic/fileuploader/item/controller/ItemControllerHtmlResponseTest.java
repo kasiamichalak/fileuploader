@@ -1,6 +1,7 @@
 package pl.casmic.fileuploader.item.controller;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -15,6 +16,7 @@ import pl.casmic.fileuploader.item.dto.ItemDTO;
 import pl.casmic.fileuploader.item.dto.ItemListDTO;
 import pl.casmic.fileuploader.item.service.ItemServiceImpl;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +32,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static pl.casmic.fileuploader.item.ItemGeneratorForTests.*;
 
-
 class ItemControllerHtmlResponseTest extends AbstractItemControllerTest implements ItemGeneratorForTests {
 
     @Mock
@@ -41,7 +42,7 @@ class ItemControllerHtmlResponseTest extends AbstractItemControllerTest implemen
 
     private static final String JSON = "json";
     private static final String ID = UUID.randomUUID().toString();
-    private static final LocalDate UPLOAD_DATE = LocalDate.of(2021, 04, 13);
+    private static final Instant UPLOAD_DATE = Instant.EPOCH;
     private static final Item ITEM = getExpectedItem(ID, UPLOAD_DATE);
     private static final ItemDTO ITEM_DTO = getExpectedItemDTOFromItem(ITEM);
     private static final String ITEM_DTO_ID = ITEM_DTO.getId();

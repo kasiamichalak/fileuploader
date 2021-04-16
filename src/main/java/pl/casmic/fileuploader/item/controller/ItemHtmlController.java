@@ -15,6 +15,7 @@ import pl.casmic.fileuploader.item.dto.ItemListDTO;
 import pl.casmic.fileuploader.item.service.ItemServiceImpl;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -49,7 +50,7 @@ public class ItemHtmlController {
                     .data(file.getBytes())
                     .size(file.getSize())
                     .description(description.orElseGet(() -> "not provided"))
-                    .uploadDate(LocalDate.now())
+                    .uploadDate(Instant.now())
                     .build();
             itemDTO = itemService.store(itemDTO);
             success = true;

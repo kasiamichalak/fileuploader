@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.time.Instant;
 import java.time.LocalDate;
 
 @Entity
@@ -25,5 +26,5 @@ public class Item {
     private byte[] data;
     private String description;
     private Long size;
-    private LocalDate uploadDate;
+    private Instant uploadDate;
 }

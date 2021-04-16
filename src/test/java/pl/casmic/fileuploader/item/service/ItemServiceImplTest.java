@@ -1,6 +1,7 @@
 package pl.casmic.fileuploader.item.service;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -11,6 +12,7 @@ import pl.casmic.fileuploader.item.dto.ItemListDTO;
 import pl.casmic.fileuploader.item.mapper.ItemMapper;
 import pl.casmic.fileuploader.item.repository.ItemRepository;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +32,7 @@ class ItemServiceImplTest implements ItemGeneratorForTests {
     private ItemMapper itemMapper = ItemMapper.ITEM_MAPPER;
 
     private static final String ID = UUID.randomUUID().toString();
-    private static final LocalDate UPLOAD_DATE = LocalDate.of(2021, 04, 13);
+    private static final Instant UPLOAD_DATE = Instant.EPOCH;
     private static final Item ITEM = getExpectedItem(ID, UPLOAD_DATE);
     private static final String ITEM_ID = ITEM.getId();
     private static final ItemDTO ITEM_DTO = getExpectedItemDTOFromItem(ITEM);
