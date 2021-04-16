@@ -41,7 +41,7 @@ public class ItemDTO {
     }
 
     @JsonSetter
-    @JsonProperty("date")
+//    @JsonProperty("date")
     private void setEpochTime(Long time) {
         this.uploadDate = Instant.ofEpochMilli(time);
     }

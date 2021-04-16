@@ -1,16 +1,14 @@
 package pl.casmic.fileuploader.item.controller;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import pl.casmic.fileuploader.item.ItemGeneratorForTests;
 import pl.casmic.fileuploader.item.domain.Item;
 import pl.casmic.fileuploader.item.dto.ItemDTO;
@@ -18,7 +16,6 @@ import pl.casmic.fileuploader.item.dto.ItemListDTO;
 import pl.casmic.fileuploader.item.service.ItemServiceImpl;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,21 +25,18 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static pl.casmic.fileuploader.item.ItemGeneratorForTests.*;
 
-@SpringBootTest
+@ExtendWith(SpringExtension.class)
+@WebMvcTest(ItemHtmlController.class)
 class ItemControllerJsonResponseTest extends AbstractItemControllerTest implements ItemGeneratorForTests {
 
-    @Mock
+    @MockBean
     private ItemServiceImpl itemService;
-    @InjectMocks
-    private ItemHtmlController itemController;
     @Autowired
-    private WebApplicationContext webApplicationContext;
     private MockMvc mockMvc;
 
     private static final String RESPONSE_FORMAT = "f";
@@ -57,12 +51,11 @@ class ItemControllerJsonResponseTest extends AbstractItemControllerTest implemen
     private static final boolean DELETE_SUCCESS_TRUE = true;
     private static final boolean DELETE_SUCCESS_FALSE = false;
     private static final String DELETE_MESSAGE_TRUE = "File deleted";
-    private static final String DELETE_MESSAGE_FALSE = "Deletion failed";
+    private static final String DELETE_MESSAGE_FALSE = "Resource not found";
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
     }
 
     @Test
@@ -87,14 +80,17 @@ class ItemControllerJsonResponseTest extends AbstractItemControllerTest implemen
 
         when(itemService.findById(anyString())).thenReturn(Optional.of(ITEM_DTO));
 
-        mockMvc.perform(get("/items/" + ID)
+        mockMvc.perform(get("/items/" + ITEM_DTO_ID)
                 .param(RESPONSE_FORMAT, JSON)
                 .content(String.valueOf(ITEM_DTO)))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.item.itemID", equalTo(ITEM_DTO.getId())))
+                .andExpect(jsonPath("$.item.itemName", equalTo(ITEM_DTO.getName())))
+                .andExpect(jsonPath("$.item.description", equalTo(ITEM_DTO.getDescription())));
+//                .andExpect(jsonPath("$.item.date", equalTo(String.valueOf(ITEM_DTO.getUploadDate()))));
 
         verify(itemService, times(1)).findById(anyString());
     }
-
 
     @Test
     void shouldDisplayNotFoundWhenItemByIdDoesNotExistInDBJson() throws Exception {

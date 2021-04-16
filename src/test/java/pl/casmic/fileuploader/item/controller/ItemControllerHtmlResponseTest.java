@@ -10,6 +10,7 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import pl.casmic.fileuploader.exception.NotFoundException;
 import pl.casmic.fileuploader.item.ItemGeneratorForTests;
 import pl.casmic.fileuploader.item.domain.Item;
 import pl.casmic.fileuploader.item.dto.ItemDTO;
@@ -102,14 +103,14 @@ class ItemControllerHtmlResponseTest extends AbstractItemControllerTest implemen
     }
 
     @Test
-    void shouldDisplayNotFoundWhenItemByIdDoesNotExistInDBHtml() throws Exception {
+    void shouldThrowNotFoundExceptionWhenItemByIdDoesNotExistInDBHtml() throws Exception {
 
         when(itemService.findById(anyString())).thenReturn(Optional.ofNullable(null));
 
         mockMvc.perform(get(ITEM_DTO_URL)
                 .contentType(MediaType.TEXT_HTML_VALUE))
                 .andExpect(status().isNotFound())
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotFoundException));
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof NotFoundException));
 
         verify(itemService, times(1)).findById(anyString());
     }
@@ -131,16 +132,14 @@ class ItemControllerHtmlResponseTest extends AbstractItemControllerTest implemen
     }
 
     @Test
-    void shouldReturnSuccessFalseForDeleteItemByIdWhenItemDoesNotExistInDBHtml() throws Exception {
+    void shouldThrowNotFoundExceptionWithSuccessFalseForDeleteItemByIdWhenItemDoesNotExistInDBHtml() throws Exception {
 
         when(itemService.findById(anyString())).thenReturn(Optional.ofNullable(null));
 
         mockMvc.perform(get(ITEM_DTO_URL + "/delete")
                 .contentType(MediaType.TEXT_HTML_VALUE))
-                .andExpect(status().isOk())
-                .andExpect(view().name("item/delete"))
-                .andExpect(model().attribute("success", DELETE_SUCCESS_FALSE))
-                .andExpect(model().attribute("message", DELETE_MESSAGE_FALSE));
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof NotFoundException));
 
         verify(itemService, times(1)).findById(anyString());
         verify(itemService, times(0)).delete(anyString());
@@ -166,7 +165,7 @@ class ItemControllerHtmlResponseTest extends AbstractItemControllerTest implemen
         mockMvc.perform(get(ITEM_DTO_URL + "/download")
                 .contentType(MediaType.TEXT_HTML_VALUE))
                 .andExpect(status().isNotFound())
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotFoundException));
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof NotFoundException));
 
         verify(itemService, times(1)).findById(anyString());
     }

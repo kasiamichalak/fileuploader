@@ -1,27 +1,23 @@
 package pl.casmic.fileuploader.item.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.hamcrest.Matcher;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import pl.casmic.fileuploader.item.ItemGeneratorForTests;
 import pl.casmic.fileuploader.item.domain.Item;
 import pl.casmic.fileuploader.item.dto.ItemDTO;
 import pl.casmic.fileuploader.item.service.ItemServiceImpl;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.*;
@@ -32,15 +28,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static pl.casmic.fileuploader.item.ItemGeneratorForTests.*;
 
-@SpringBootTest
+@ExtendWith(SpringExtension.class)
+@WebMvcTest(ItemHtmlController.class)
 class ItemControllerUploadTestWithWebAppContext extends AbstractItemControllerTest implements ItemGeneratorForTests {
 
-    @Mock
+    @MockBean
     private ItemServiceImpl itemService;
-    @InjectMocks
-    private ItemHtmlController itemController;
     @Autowired
-    private WebApplicationContext webApplicationContext;
     private MockMvc mockMvc;
 
     private static final String RESPONSE_FORMAT = "f";
@@ -61,9 +55,8 @@ class ItemControllerUploadTestWithWebAppContext extends AbstractItemControllerTe
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
     }
-@Disabled
+
     @Test
     void shouldUploadFileWithDescriptionAndSaveItToDBHtml() throws Exception {
 
@@ -84,7 +77,7 @@ class ItemControllerUploadTestWithWebAppContext extends AbstractItemControllerTe
 
         verify(itemService, times(1)).store(any(ItemDTO.class));
     }
-@Disabled
+
     @Test
     void shouldUploadFileWithDescriptionAndSaveItToDBJson() throws Exception {
 
@@ -101,12 +94,12 @@ class ItemControllerUploadTestWithWebAppContext extends AbstractItemControllerTe
                 .andExpect(jsonPath("$.success", equalTo(UPLOAD_SUCCESS_TRUE)))
                 .andExpect(jsonPath("$.item.itemID", equalTo(ITEM_DTO_WITH_DESCRIPTION.getId())))
                 .andExpect(jsonPath("$.item.itemName", equalTo(ITEM_DTO_WITH_DESCRIPTION.getName())))
-                .andExpect(jsonPath("$.item.description", equalTo(ITEM_DTO_WITH_DESCRIPTION.getDescription())))
-                .andExpect(jsonPath("$.item.date", equalTo(String.valueOf(ITEM_DTO_WITH_DESCRIPTION.getUploadDate()))));
+                .andExpect(jsonPath("$.item.description", equalTo(ITEM_DTO_WITH_DESCRIPTION.getDescription())));
+//                .andExpect(jsonPath("$.item.date", equalTo(String.valueOf(ITEM_DTO_WITH_DESCRIPTION.getUploadDate()))));
 
         verify(itemService, times(1)).store(any(ItemDTO.class));
     }
-@Disabled
+
     @Test
     void shouldUploadFileWithNoDescriptionAndSaveItToDBHtml() throws Exception {
 
@@ -124,8 +117,10 @@ class ItemControllerUploadTestWithWebAppContext extends AbstractItemControllerTe
                 .andExpect(model().attribute("success", UPLOAD_SUCCESS_TRUE))
                 .andExpect(model().attribute("item", ITEM_DTO_DEFAULT_DESCRIPTION))
                 .andExpect(model().attributeExists("item"));
+
+        verify(itemService, times(1)).store(any(ItemDTO.class));
     }
-@Disabled
+
     @Test
     void shouldUploadFileWithNoDescriptionAndSaveItToDBJson() throws Exception {
 
@@ -141,8 +136,8 @@ class ItemControllerUploadTestWithWebAppContext extends AbstractItemControllerTe
                 .andExpect(jsonPath("$.success", equalTo(UPLOAD_SUCCESS_TRUE)))
                 .andExpect(jsonPath("$.item.itemID", equalTo(ITEM_DTO_DEFAULT_DESCRIPTION.getId())))
                 .andExpect(jsonPath("$.item.itemName", equalTo(ITEM_DTO_DEFAULT_DESCRIPTION.getName())))
-                .andExpect(jsonPath("$.item.description", equalTo(ITEM_DTO_DEFAULT_DESCRIPTION.getDescription())))
-                .andExpect(jsonPath("$.item.date", equalTo(String.valueOf(ITEM_DTO_DEFAULT_DESCRIPTION.getUploadDate()))));
+                .andExpect(jsonPath("$.item.description", equalTo(ITEM_DTO_DEFAULT_DESCRIPTION.getDescription())));
+//                .andExpect(jsonPath("$.item.date", equalTo(String.valueOf(ITEM_DTO_DEFAULT_DESCRIPTION.getUploadDate()))));
 
         verify(itemService, times(1)).store(any(ItemDTO.class));
     }
@@ -175,7 +170,7 @@ class ItemControllerUploadTestWithWebAppContext extends AbstractItemControllerTe
                 .param("description", DESCRIPTION_PARAM_NULL))
                 .andExpect(status().isAccepted())
                 .andExpect(jsonPath("$.success", equalTo(UPLOAD_SUCCESS_FALSE)))
-//                .andExpect(jsonPath("$.item.itemID", is(nullValue())))
+                .andExpect(jsonPath("$.item.itemID", is(nullValue())))
                 .andExpect(jsonPath("$.item.itemName", is(nullValue())))
                 .andExpect(jsonPath("$.item.description", is(nullValue())))
                 .andExpect(jsonPath("$.item.date", is(nullValue())));
@@ -210,7 +205,7 @@ class ItemControllerUploadTestWithWebAppContext extends AbstractItemControllerTe
                 .param("description", DESCRIPTION_PARAM_EXISTING))
                 .andExpect(status().isAccepted())
                 .andExpect(jsonPath("$.success", equalTo(UPLOAD_SUCCESS_FALSE)))
-//                .andExpect(jsonPath("$.item.itemID", is(nullValue())))
+                .andExpect(jsonPath("$.item.itemID", is(nullValue())))
                 .andExpect(jsonPath("$.item.itemName", is(nullValue())))
                 .andExpect(jsonPath("$.item.description", is(nullValue())))
                 .andExpect(jsonPath("$.item.date", is(nullValue())));

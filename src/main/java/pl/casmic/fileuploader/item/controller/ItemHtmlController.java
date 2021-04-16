@@ -10,15 +10,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import pl.casmic.fileuploader.exception.NotFoundException;
 import pl.casmic.fileuploader.item.dto.ItemDTO;
 import pl.casmic.fileuploader.item.dto.ItemListDTO;
 import pl.casmic.fileuploader.item.service.ItemServiceImpl;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 @AllArgsConstructor
 @Controller
@@ -78,32 +80,32 @@ public class ItemHtmlController {
     @ResponseStatus(HttpStatus.OK)
     public String item(@PathVariable(name = "id") final String id, Model model) {
 
-        ItemDTO itemDTO = itemService.findById(id)
-                .orElseThrow(ResourceNotFoundException::new);
-
-        model.addAttribute("item", itemDTO);
-
-        return "item/item";
-    }
+       return itemService.findById(id)
+               .map(itemDTO -> {
+                   model.addAttribute("item", itemDTO);
+                   return "item/item";
+               })
+               .orElseThrow(NotFoundException::new);
+        }
 
     @GetMapping(value = "/items/{id}/delete",
             produces = {MediaType.TEXT_HTML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.OK)
     public String delete(@PathVariable(name = "id") final String id, Model model) {
 
-        boolean success = false;
-        String message = "Deletion failed";
+        return itemService.findById(id)
+                .map(itemDTO -> {
+                    itemService.delete(itemDTO.getId());
 
-        if (itemService.findById(id).isPresent()) {
-            itemService.delete(id);
-            success = true;
-            message = "File deleted";
-        }
+                    Boolean success = true;
+                    String message = "File deleted";
 
-        model.addAttribute("success", success);
-        model.addAttribute("message", message);
+                    model.addAttribute("success", success);
+                    model.addAttribute("message", message);
 
-        return "item/delete";
+                    return "item/delete";
+                })
+                .orElseThrow(NotFoundException::new);
     }
 
     @GetMapping("/items/{id}/download")
@@ -115,6 +117,18 @@ public class ItemHtmlController {
                         .header(HttpHeaders.CONTENT_DISPOSITION,
                                 "attachment; filename=\"" + itemDTO.getName() + "\"")
                         .body(itemDTO.getData()))
-                .orElseThrow(ResourceNotFoundException::new);
+                .orElseThrow(NotFoundException::new);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NotFoundException.class)
+    public String handleNotFoundException(Exception exception, Model model) {
+
+        boolean success = false;
+        String message = "Resource not found";
+        model.addAttribute("success", success);
+        model.addAttribute("message", message);
+
+        return "exception/404error";
     }
 }
