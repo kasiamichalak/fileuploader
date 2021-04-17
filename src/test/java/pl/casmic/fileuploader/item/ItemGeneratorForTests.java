@@ -27,7 +27,6 @@ public interface ItemGeneratorForTests {
     ItemListDTO ITEM_LIST_DTO = getExpectedItemListDTOFromItem(ITEM);
     ItemDTO ITEM_DTO_WITH_DESCRIPTION = getExpectedItemDTOFromItem(ITEM);
     ItemDTO ITEM_DTO_DEFAULT_DESCRIPTION = getExpectedItemDTOFromItemWithDefaultDescription(ITEM, DESCRIPTION_DEFAULT);
-    ItemDTO ITEM_DTO_FIELDS_NULL = new ItemDTO();
     List<ItemListDTO> LIST_ITEM_LIST_DTOS = getExpectedListOfItemListDTOs();
     List<Item> LIST_ITEMS = getExpectedListOfItems();
     boolean UPLOAD_SUCCESS_TRUE = true;

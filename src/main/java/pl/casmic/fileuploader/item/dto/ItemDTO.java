@@ -1,12 +1,14 @@
 package pl.casmic.fileuploader.item.dto;
 
 import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Lob;
+import java.text.Format;
 import java.time.Instant;
 
 @Data

@@ -37,21 +37,6 @@ class ItemControllerUploadTestWithWebAppContext extends AbstractItemControllerTe
     @Autowired
     private MockMvc mockMvc;
 
-//    private static final String RESPONSE_FORMAT = "f";
-//    private static final String JSON = "json";
-//    private static final String HTML = "html";
-//    private static final String DESCRIPTION_PARAM_EXISTING = "description";
-//    private static final String DESCRIPTION_PARAM_NULL = null;
-//    private static final String DESCRIPTION_DEFAULT = "not provided";
-//    private static final String ID = UUID.randomUUID().toString();
-//    private static final Instant UPLOAD_DATE = Instant.EPOCH;
-//    private static final Item ITEM = getExpectedItem(ID, UPLOAD_DATE);
-//    private final static ItemDTO ITEM_DTO_WITH_DESCRIPTION = getExpectedItemDTOFromItem(ITEM);
-//    private final static ItemDTO ITEM_DTO_DEFAULT_DESCRIPTION = getExpectedItemDTOFromItemWithDefaultDescription(ITEM, DESCRIPTION_DEFAULT);
-//    private final static ItemDTO ITEM_DTO_FIELDS_NULL = new ItemDTO();
-//    private static final boolean UPLOAD_SUCCESS_TRUE = true;
-//    private static final boolean UPLOAD_SUCCESS_FALSE = false;
-
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);

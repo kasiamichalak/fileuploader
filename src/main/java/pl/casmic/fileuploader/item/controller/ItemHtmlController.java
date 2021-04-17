@@ -5,6 +5,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -37,18 +38,24 @@ public class ItemHtmlController {
             produces = {MediaType.TEXT_HTML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.ACCEPTED)
     public String upload(@RequestPart(name = "file") final MultipartFile file,
-                         @RequestParam(name = "description") final Optional<String> description, Model model) throws IOException {
+                         @RequestParam(name = "description", required = false) @Nullable final String description, Model model) throws IOException {
 
         ItemDTO itemDTO = new ItemDTO();
-        itemDTO.setId(null);
+//        itemDTO.setId(null);
+
         boolean success = false;
+        String fileDescription = description;
+
+        if(description == null || description.isBlank()) {
+            fileDescription = "not provided";
+        }
 
         if (file.getSize() != 0) {
             itemDTO = ItemDTO.builder()
                     .name(file.getOriginalFilename())
                     .data(file.getBytes())
                     .size(file.getSize())
-                    .description(description.orElseGet(() -> "not provided"))
+                    .description(fileDescription)
                     .uploadDate(Instant.now())
                     .build();
             itemDTO = itemService.store(itemDTO);
