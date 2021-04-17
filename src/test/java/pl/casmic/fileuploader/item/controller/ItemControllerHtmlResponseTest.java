@@ -1,12 +1,10 @@
 package pl.casmic.fileuploader.item.controller;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -18,7 +16,6 @@ import pl.casmic.fileuploader.item.dto.ItemListDTO;
 import pl.casmic.fileuploader.item.service.ItemServiceImpl;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +24,6 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -40,19 +36,6 @@ class ItemControllerHtmlResponseTest extends AbstractItemControllerTest implemen
     @InjectMocks
     private ItemHtmlController itemController;
     private MockMvc mockMvc;
-
-    private static final String JSON = "json";
-    private static final String ID = UUID.randomUUID().toString();
-    private static final Instant UPLOAD_DATE = Instant.EPOCH;
-    private static final Item ITEM = getExpectedItem(ID, UPLOAD_DATE);
-    private static final ItemDTO ITEM_DTO = getExpectedItemDTOFromItem(ITEM);
-    private static final String ITEM_DTO_ID = ITEM_DTO.getId();
-    private static final String ITEM_DTO_URL = "/items/" + ITEM_DTO_ID;
-    private static final ItemListDTO ITEM_LIST_DTO = getExpectedItemListDTOFromItem(ITEM);
-    private static final boolean DELETE_SUCCESS_TRUE = true;
-    private static final boolean DELETE_SUCCESS_FALSE = false;
-    private static final String DELETE_MESSAGE_TRUE = "File deleted";
-    private static final String DELETE_MESSAGE_FALSE = "Deletion failed";
 
     @BeforeEach
     void setUp() {

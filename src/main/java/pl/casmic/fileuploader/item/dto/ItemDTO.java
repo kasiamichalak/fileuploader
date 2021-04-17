@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Lob;
 import java.time.Instant;
-import java.time.LocalDate;
 
 @Data
 @Builder
@@ -33,17 +32,12 @@ public class ItemDTO {
     @JsonGetter
     @JsonProperty("date")
     private Long getEpochTime() {
-        if (uploadDate != null) {
-            return this.uploadDate.toEpochMilli();
-        } else {
-            return null;
-        }
+        return this.uploadDate != null ? this.uploadDate.toEpochMilli() : null;
     }
 
     @JsonSetter
-//    @JsonProperty("date")
+    @JsonProperty("date")
     private void setEpochTime(Long time) {
         this.uploadDate = Instant.ofEpochMilli(time);
     }
-
 }

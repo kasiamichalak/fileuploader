@@ -5,12 +5,37 @@ import pl.casmic.fileuploader.item.dto.ItemDTO;
 import pl.casmic.fileuploader.item.dto.ItemListDTO;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.UUID;
 
 public interface ItemGeneratorForTests {
+
+    String RESPONSE_FORMAT = "f";
+    String JSON = "json";
+    String HTML = "html";
+    String DESCRIPTION_PARAM_EXISTING = "description";
+    String DESCRIPTION_PARAM_NULL = null;
+    String DESCRIPTION_DEFAULT = "not provided";
+    String ID = UUID.randomUUID().toString();
+    Instant UPLOAD_DATE = Instant.EPOCH;
+    Item ITEM = getExpectedItem(ID, UPLOAD_DATE);
+    String ITEM_ID = ITEM.getId();
+    ItemDTO ITEM_DTO = getExpectedItemDTOFromItem(ITEM);
+    String ITEM_DTO_ID = ITEM_DTO.getId();
+    String ITEM_DTO_URL = "/items/" + ID;
+    ItemListDTO ITEM_LIST_DTO = getExpectedItemListDTOFromItem(ITEM);
+    ItemDTO ITEM_DTO_WITH_DESCRIPTION = getExpectedItemDTOFromItem(ITEM);
+    ItemDTO ITEM_DTO_DEFAULT_DESCRIPTION = getExpectedItemDTOFromItemWithDefaultDescription(ITEM, DESCRIPTION_DEFAULT);
+    ItemDTO ITEM_DTO_FIELDS_NULL = new ItemDTO();
+    List<ItemListDTO> LIST_ITEM_LIST_DTOS = getExpectedListOfItemListDTOs();
+    List<Item> LIST_ITEMS = getExpectedListOfItems();
+    boolean UPLOAD_SUCCESS_TRUE = true;
+    boolean UPLOAD_SUCCESS_FALSE = false;
+    boolean DELETE_SUCCESS_TRUE = true;
+    boolean DELETE_SUCCESS_FALSE = false;
+    String DELETE_MESSAGE_TRUE = "File deleted";
+    String DELETE_MESSAGE_FALSE = "Resource not found";
 
     static Item getExpectedItem(String id, Instant date) {
         return Item.builder()

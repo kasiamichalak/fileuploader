@@ -1,7 +1,5 @@
 package pl.casmic.fileuploader.item.mapper;
 
-import org.hibernate.id.UUIDGenerator;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import pl.casmic.fileuploader.item.ItemGeneratorForTests;
 import pl.casmic.fileuploader.item.domain.Item;
@@ -9,7 +7,6 @@ import pl.casmic.fileuploader.item.dto.ItemDTO;
 import pl.casmic.fileuploader.item.dto.ItemListDTO;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,12 +15,6 @@ import static pl.casmic.fileuploader.item.ItemGeneratorForTests.*;
 class ItemMapperTest implements ItemGeneratorForTests {
 
     private ItemMapper itemMapper = ItemMapper.ITEM_MAPPER;
-
-    private static final String ID = UUID.randomUUID().toString();
-    private static final Instant UPLOAD_DATE = Instant.EPOCH;
-    private static final Item ITEM = getExpectedItem(ID, UPLOAD_DATE);
-    private static final ItemDTO ITEM_DTO = getExpectedItemDTOFromItem(ITEM);
-    private static final ItemListDTO ITEM_LIST_DTO = getExpectedItemListDTOFromItem(ITEM);
 
     @Test
     void testItemToItemDTOHappyPath() {
