@@ -13,12 +13,8 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import pl.casmic.fileuploader.item.ItemGeneratorForTests;
-import pl.casmic.fileuploader.item.domain.Item;
 import pl.casmic.fileuploader.item.dto.ItemDTO;
 import pl.casmic.fileuploader.item.service.ItemServiceImpl;
-
-import java.time.Instant;
-import java.util.UUID;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -26,11 +22,10 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static pl.casmic.fileuploader.item.ItemGeneratorForTests.*;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(ItemHtmlController.class)
-class ItemControllerUploadTestWithWebAppContext extends AbstractItemControllerTest implements ItemGeneratorForTests {
+class ItemHtmlControllerUploadFileTest implements ItemGeneratorForTests {
 
     @MockBean
     private ItemServiceImpl itemService;
@@ -79,8 +74,8 @@ class ItemControllerUploadTestWithWebAppContext extends AbstractItemControllerTe
                 .andExpect(jsonPath("$.success", equalTo(UPLOAD_SUCCESS_TRUE)))
                 .andExpect(jsonPath("$.item.itemID", equalTo(ITEM_DTO_WITH_DESCRIPTION.getId())))
                 .andExpect(jsonPath("$.item.itemName", equalTo(ITEM_DTO_WITH_DESCRIPTION.getName())))
-                .andExpect(jsonPath("$.item.description", equalTo(ITEM_DTO_WITH_DESCRIPTION.getDescription())));
-//                .andExpect(jsonPath("$.item.date", equalTo(String.valueOf(ITEM_DTO_WITH_DESCRIPTION.getUploadDate()))));
+                .andExpect(jsonPath("$.item.description", equalTo(ITEM_DTO_WITH_DESCRIPTION.getDescription())))
+                .andExpect(jsonPath("$.item.date", equalTo((int) ITEM_DTO.getUploadDate().toEpochMilli()), Integer.class));
 
         verify(itemService, times(1)).store(any(ItemDTO.class));
     }
@@ -121,8 +116,8 @@ class ItemControllerUploadTestWithWebAppContext extends AbstractItemControllerTe
                 .andExpect(jsonPath("$.success", equalTo(UPLOAD_SUCCESS_TRUE)))
                 .andExpect(jsonPath("$.item.itemID", equalTo(ITEM_DTO_DEFAULT_DESCRIPTION.getId())))
                 .andExpect(jsonPath("$.item.itemName", equalTo(ITEM_DTO_DEFAULT_DESCRIPTION.getName())))
-                .andExpect(jsonPath("$.item.description", equalTo(ITEM_DTO_DEFAULT_DESCRIPTION.getDescription())));
-//                .andExpect(jsonPath("$.item.date", equalTo(String.valueOf(ITEM_DTO_DEFAULT_DESCRIPTION.getUploadDate()))));
+                .andExpect(jsonPath("$.item.description", equalTo(ITEM_DTO_DEFAULT_DESCRIPTION.getDescription())))
+                .andExpect(jsonPath("$.item.date", equalTo((int) ITEM_DTO.getUploadDate().toEpochMilli()), Integer.class));
 
         verify(itemService, times(1)).store(any(ItemDTO.class));
     }

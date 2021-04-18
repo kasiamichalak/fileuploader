@@ -1,54 +1,54 @@
 package pl.casmic.fileuploader.item.controller;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import pl.casmic.fileuploader.exception.NotFoundException;
 import pl.casmic.fileuploader.item.ItemGeneratorForTests;
-import pl.casmic.fileuploader.item.domain.Item;
-import pl.casmic.fileuploader.item.dto.ItemDTO;
 import pl.casmic.fileuploader.item.dto.ItemListDTO;
 import pl.casmic.fileuploader.item.service.ItemServiceImpl;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static pl.casmic.fileuploader.item.ItemGeneratorForTests.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(SpringExtension.class)
-@WebMvcTest(ItemHtmlController.class)
-class ItemControllerJsonResponseTest extends AbstractItemControllerTest implements ItemGeneratorForTests {
+class ItemHtmlControllerHtmlResponseTest implements ItemGeneratorForTests {
 
-    @MockBean
+    @Mock
     private ItemServiceImpl itemService;
-    @Autowired
+    @InjectMocks
+    private ItemHtmlController itemController;
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        mockMvc = MockMvcBuilders.standaloneSetup(itemController).build();
     }
 
     @Test
-    void shouldDisplayListOfAllFilesUploadedAndSavedInDBJson() throws Exception {
+    void shouldDisplayUploadFormHtml() throws Exception {
+
+        mockMvc.perform(get("/")
+                .contentType(MediaType.TEXT_HTML_VALUE))
+                .andExpect(status().isOk())
+                .andExpect(view().name("item/uploadform"));
+    }
+
+    @Test
+    void shouldDisplayListOfAllFilesUploadedAndSavedInDBHtml() throws Exception {
 
         List<ItemListDTO> itemsList = new ArrayList<>();
         itemsList.add(ITEM_LIST_DTO);
@@ -57,37 +57,36 @@ class ItemControllerJsonResponseTest extends AbstractItemControllerTest implemen
         when(itemService.findAll()).thenReturn(itemsList);
 
         mockMvc.perform(get("/items")
-                .param(RESPONSE_FORMAT, JSON))
+                .contentType(MediaType.TEXT_HTML_VALUE))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.items", hasSize(2)));
+                .andExpect(view().name("item/items"))
+                .andExpect(model().attributeExists("items"));
 
         verify(itemService, times(1)).findAll();
     }
 
     @Test
-    void shouldDisplayItemByIdWhenItemExistsInDBJson() throws Exception {
+    void shouldDisplayItemByIdWhenItemExistsInDBHtml() throws Exception {
 
         when(itemService.findById(anyString())).thenReturn(Optional.of(ITEM_DTO));
 
-        mockMvc.perform(get("/items/" + ITEM_DTO_ID)
-                .param(RESPONSE_FORMAT, JSON)
-                .content(String.valueOf(ITEM_DTO)))
+        mockMvc.perform(get(ITEM_DTO_URL)
+                .contentType(MediaType.TEXT_HTML_VALUE))
+                .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.item.itemID", equalTo(ITEM_DTO.getId())))
-                .andExpect(jsonPath("$.item.itemName", equalTo(ITEM_DTO.getName())))
-                .andExpect(jsonPath("$.item.description", equalTo(ITEM_DTO.getDescription())));
-//                .andExpect(jsonPath("$.item.date", equalTo(String.valueOf(ITEM_DTO.getUploadDate()))));
+                .andExpect(view().name("item/item"))
+                .andExpect(model().attributeExists("item"));
 
         verify(itemService, times(1)).findById(anyString());
     }
 
     @Test
-    void shouldThrowNotFoundExceptionWhenItemByIdDoesNotExistInDBJson() throws Exception {
+    void shouldThrowNotFoundExceptionWhenItemByIdDoesNotExistInDBHtml() throws Exception {
 
         when(itemService.findById(anyString())).thenReturn(Optional.ofNullable(null));
 
         mockMvc.perform(get(ITEM_DTO_URL)
-                .param(RESPONSE_FORMAT, JSON))
+                .contentType(MediaType.TEXT_HTML_VALUE))
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof NotFoundException));
 
@@ -95,30 +94,29 @@ class ItemControllerJsonResponseTest extends AbstractItemControllerTest implemen
     }
 
     @Test
-    void shouldReturnSuccessTrueForDeleteItemByIdWhenItemExistsInDBJson() throws Exception {
+    void shouldReturnSuccessTrueForDeleteItemByIdWhenItemExistsInDBHtml() throws Exception {
 
         when(itemService.findById(anyString())).thenReturn(Optional.ofNullable(ITEM_DTO));
 
         mockMvc.perform(get(ITEM_DTO_URL + "/delete")
-                .param(RESPONSE_FORMAT, JSON))
+                .contentType(MediaType.TEXT_HTML_VALUE))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.success", equalTo(DELETE_SUCCESS_TRUE)))
-                .andExpect(jsonPath("$.message", equalTo(DELETE_MESSAGE_TRUE)));
+                .andExpect(view().name("item/delete"))
+                .andExpect(model().attribute("success", DELETE_SUCCESS_TRUE))
+                .andExpect(model().attribute("message", DELETE_MESSAGE_TRUE));
 
         verify(itemService, times(1)).findById(anyString());
         verify(itemService, times(1)).delete(anyString());
     }
 
     @Test
-    void shouldThrowNotFoundExceptionForDeleteItemByIdWhenItemDoesNotExistInDBJson() throws Exception {
+    void shouldThrowNotFoundExceptionWithSuccessFalseForDeleteItemByIdWhenItemDoesNotExistInDBHtml() throws Exception {
 
         when(itemService.findById(anyString())).thenReturn(Optional.ofNullable(null));
 
         mockMvc.perform(get(ITEM_DTO_URL + "/delete")
-                .param(RESPONSE_FORMAT, JSON))
+                .contentType(MediaType.TEXT_HTML_VALUE))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.success", equalTo(DELETE_SUCCESS_FALSE)))
-                .andExpect(jsonPath("$.message", equalTo(DELETE_MESSAGE_FALSE)))
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof NotFoundException));
 
         verify(itemService, times(1)).findById(anyString());
@@ -126,25 +124,24 @@ class ItemControllerJsonResponseTest extends AbstractItemControllerTest implemen
     }
 
     @Test
-    void shouldDownloadFileForItemByIdWhenItemExistsInDBJson() throws Exception {
+    void shouldDownloadFileForItemByIdWhenItemExistsInDBHtml() throws Exception {
 
         when(itemService.findById(anyString())).thenReturn(Optional.of(ITEM_DTO));
 
         mockMvc.perform(get(ITEM_DTO_URL + "/download")
-                .param(RESPONSE_FORMAT, JSON)
-                .content(ITEM_DTO.getData()))
+                .contentType(MediaType.TEXT_HTML_VALUE))
                 .andExpect(status().isOk());
 
         verify(itemService, times(1)).findById(anyString());
     }
 
     @Test
-    void shouldThrowNotFoundExceptionWhenDownloadFileForItemByIdWhenItemDoesNotExistInDBJson() throws Exception {
+    void shouldReturnNotFoundWhenDownloadFileForItemByIdWhenItemDoesNotExistInDBHtml() throws Exception {
 
         when(itemService.findById(anyString())).thenReturn(Optional.ofNullable(null));
 
         mockMvc.perform(get(ITEM_DTO_URL + "/download")
-                .param(RESPONSE_FORMAT, JSON))
+                .contentType(MediaType.TEXT_HTML_VALUE))
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof NotFoundException));
 

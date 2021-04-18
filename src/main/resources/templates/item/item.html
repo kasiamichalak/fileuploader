@@ -6,7 +6,19 @@
     <div class=".col-md-6 .col-md-offset-3">
         <div class="card mt-4 ml-4 mr-4 border">
             <div class="card-header light">
-                <h5 class="card-title">Item Details</h5>
+                <div class="row">
+                    <div class="col-9">
+                        <h5 class="card-title">Item Details</h5>
+                    </div>
+                    <div class="col-3">
+                        <div class="button-group float-right">
+                            <a class="btn btn-outline-dark btn-sm" href="#"
+                               th:href="@{'/'}" role="button">upload file</a>
+                            <a class="btn btn-outline-dark btn-sm" href="#"
+                               th:href="@{'/items/'}" role="button">all items</a>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -18,7 +30,6 @@
                             <th scope="col">description</th>
                             <th scope="col">date</th>
                             <th scope="col"></th>
-                            <th scope="col"></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -28,12 +39,12 @@
                             <td th:text="${item.description}">description</td>
                             <td th:text="${item.uploadDate}">date</td>
                             <td>
-                                <a class="btn btn-outline-dark btn-sm" href="#"
-                                   th:href="@{'/items/' + ${item.id} + '/download'}" role="button">download</a>
-                            </td>
-                            <td>
-                                <a class="btn btn-outline-dark btn-sm float-right" href="#"
-                                   th:href="@{'/items/' + ${item.id} + '/delete'}" role="button">delete</a>
+                                <div class="button-group float-right">
+                                    <a class="btn btn-outline-dark btn-sm" href="#"
+                                       th:href="@{'/items/' + ${item.id} + '/download'}" role="button">download</a>
+                                    <a class="btn btn-outline-dark btn-sm" href="#"
+                                       th:href="@{'/items/' + ${item.id} + '/delete'}" role="button">delete</a>
+                                </div>
                             </td>
                         </tr>
                         </tbody>

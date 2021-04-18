@@ -1,14 +1,15 @@
 package pl.casmic.fileuploader.item.dto;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Lob;
-import java.text.Format;
 import java.time.Instant;
 
 @Data
@@ -37,8 +38,6 @@ public class ItemDTO {
         return this.uploadDate != null ? this.uploadDate.toEpochMilli() : null;
     }
 
-    @JsonSetter
-    @JsonProperty("date")
     private void setEpochTime(Long time) {
         this.uploadDate = Instant.ofEpochMilli(time);
     }

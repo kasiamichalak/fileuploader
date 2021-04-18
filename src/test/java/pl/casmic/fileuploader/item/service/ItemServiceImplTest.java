@@ -11,16 +11,13 @@ import pl.casmic.fileuploader.item.dto.ItemListDTO;
 import pl.casmic.fileuploader.item.mapper.ItemMapper;
 import pl.casmic.fileuploader.item.repository.ItemRepository;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static pl.casmic.fileuploader.item.ItemGeneratorForTests.*;
 
 class ItemServiceImplTest implements ItemGeneratorForTests {
 

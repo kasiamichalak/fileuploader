@@ -6,11 +6,7 @@ import pl.casmic.fileuploader.item.domain.Item;
 import pl.casmic.fileuploader.item.dto.ItemDTO;
 import pl.casmic.fileuploader.item.dto.ItemListDTO;
 
-import java.time.Instant;
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static pl.casmic.fileuploader.item.ItemGeneratorForTests.*;
 
 class ItemMapperTest implements ItemGeneratorForTests {
 
