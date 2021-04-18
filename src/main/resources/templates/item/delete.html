@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Delete results</title>
-</head>
+<head th:replace="fragments/fragments::head">
+
 <body>
-<div>
-    <div th:text="'success: ' + ${success}">Success: </div>
-    <div th:text="'message: ' + ${message}">Message: </div>
+<div class="container mt-4">
+    <div class=".col-md-6 .col-md-offset-3">
+        <div class="card mt-4 ml-4 mr-4 border">
+            <div class="card-header light light">
+                <h5 class="card-title" th:text="${message}">Message</h5>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 </html>

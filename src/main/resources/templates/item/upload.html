@@ -1,17 +1,63 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Upload result</title>
-</head>
+<head th:replace="fragments/fragments::head">
+    <head>
+
 <body>
-<div>
-    <div th:text="'Success: ' + ${success}">Success: </div>
-    <div th:text="'Item: '">Item: </div>
-    <div th:text="'itemID: ' + ${item.id}">itemID: </div>
-    <div th:text="'itemName: ' + ${item.name}">itemName: </div>
-    <div th:text="'description: ' + ${item.description}">description: </div>
-    <div th:text="'date: ' + ${item.uploadDate}">date: </div>
+<div class="container mt-4">
+    <div class=".col-md-6 .col-md-offset-3">
+        <div class="card mt-4 ml-4 mr-4 border">
+            <div class="card-header light">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <h5 class="card-title">File Upload Details</h5>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="row">
+                            <div class="col">
+                                <a class="btn btn-outline-dark btn-sm float-right" href="#"
+                                   th:href="@{'/'}" role="button">upload file</a>
+                            </div>
+                            <div class="col">
+                                <a class="btn btn-outline-dark btn-sm float-right" href="#"
+                                   th:href="@{'/items/'}" role="button">all items</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                        <tr>
+                            <th scope="col">itemID</th>
+                            <th scope="col">itemName</th>
+                            <th scope="col">description</th>
+                            <th scope="col">date</th>
+                            <th scope="col">success</th>
+                            <th scope="col"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td th:text="${item.id}">itemID</td>
+                            <td th:text="${item.name}">itemName</td>
+                            <td th:text="${item.description}">description</td>
+                            <td th:text="${item.uploadDate}">date</td>
+                            <td th:text="${success}">success</td>
+                            <td>
+                                <a class="btn btn-outline-dark btn-sm float-right" href="#"
+                                   th:href="@{'/items/' + ${item.id}}" role="button">details</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </div>
 </body>
 </html>

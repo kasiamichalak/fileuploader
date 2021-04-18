@@ -41,7 +41,6 @@ public class ItemHtmlController {
                          @RequestParam(name = "description", required = false) @Nullable final String description, Model model) throws IOException {
 
         ItemDTO itemDTO = new ItemDTO();
-//        itemDTO.setId(null);
 
         boolean success = false;
         String fileDescription = description;
